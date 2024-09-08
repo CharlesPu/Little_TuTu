@@ -1,0 +1,10 @@
+.\little_tutu\inv_mpu_dmp_motion_driver.o: ..\mpu6050\inv_mpu_dmp_motion_driver.c
+.\little_tutu\inv_mpu_dmp_motion_driver.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\little_tutu\inv_mpu_dmp_motion_driver.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\little_tutu\inv_mpu_dmp_motion_driver.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\little_tutu\inv_mpu_dmp_motion_driver.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\little_tutu\inv_mpu_dmp_motion_driver.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+.\little_tutu\inv_mpu_dmp_motion_driver.o: ..\mpu6050\inv_mpu.h
+.\little_tutu\inv_mpu_dmp_motion_driver.o: ..\mpu6050\inv_mpu_dmp_motion_driver.h
+.\little_tutu\inv_mpu_dmp_motion_driver.o: ..\mpu6050\dmpKey.h
+.\little_tutu\inv_mpu_dmp_motion_driver.o: ..\mpu6050\dmpmap.h

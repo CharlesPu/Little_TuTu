@@ -100,6 +100,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM1_Init();
   MX_I2C1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart1, (uint8_t *)RxBuffer, RXBUF_LEN);// Âê?Áî®Êé•Êî?
 

@@ -59,6 +59,14 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define DOGGY_Pin GPIO_PIN_13
 #define DOGGY_GPIO_Port GPIOC
+#define MOTOR1_PWM_Pin GPIO_PIN_0
+#define MOTOR1_PWM_GPIO_Port GPIOA
+#define MOTOR2_PWM_Pin GPIO_PIN_1
+#define MOTOR2_PWM_GPIO_Port GPIOA
+#define MOTOR3_PWM_Pin GPIO_PIN_2
+#define MOTOR3_PWM_GPIO_Port GPIOA
+#define MOTOR4_PWM_Pin GPIO_PIN_3
+#define MOTOR4_PWM_GPIO_Port GPIOA
 #define MPU_I2C_SCL_Pin GPIO_PIN_10
 #define MPU_I2C_SCL_GPIO_Port GPIOB
 #define MPU_I2C_SDA_Pin GPIO_PIN_11

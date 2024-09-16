@@ -27,10 +27,15 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "oled_u8g2.h"
+#include "motor.h"
+#include "motion.h"
+
+#ifdef MODULE_MPU6050
 #include "mpu6050.h"
 #include "inv_mpu.h"
-#include "inv_mpu_dmp_motion_driver.h" 
-//#include "string.h"
+#include "inv_mpu_dmp_motion_driver.h"
+#endif
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,10 +56,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-float pitch,roll,yaw; 		//欧拉角
-short aacx,aacy,aacz;		  //加速度传感器原始数据
-short gyrox,gyroy,gyroz;	//陀螺仪原始数据
-short temp;								//温度	
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -86,6 +88,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 	HAL_Delay(100); // for oled
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -97,56 +100,83 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART1_UART_Init();
   MX_TIM1_Init();
-  MX_I2C1_Init();
   MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_TIM5_Init();
+  MX_I2C1_Init();
+  MX_USART1_UART_Init();
+  MX_TIM6_Init();
+  MX_TIM8_Init();
+  MX_USART3_UART_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart1, (uint8_t *)RxBuffer, RXBUF_LEN);// 鍚?鐢ㄦ帴鏀?
-
+  uart_it_init();
   OLED_U8G2_init();
 
-  MPU_Init();					       //初始化MPU6050
-
+#ifdef MODULE_MPU6050
+  MPU_Init();					       //锟斤拷始锟斤拷MPU6050
   uint8_t res = 0;
   do{
     res = mpu_dmp_init();
-		printf("mpu_dmp_init code: %d\r\n",res);
+		ERR_LOG("mpu_dmp_init code: %d\r\n",res);
 	}while (res);
+#endif
+
+  motor_init();
+  motor_encoder_init();
+  INF_LOG("little tutu start!\r\n");
   
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint64_t loop_cnt=0;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//		HAL_UART_Transmit(&huart1,(uint8_t *)"hello world!\r\n",14,HAL_MAX_DELAY);
-		// printf("bbbbbbb\r\n");
-		HAL_GPIO_TogglePin(DOGGY_GPIO_Port, DOGGY_Pin);
-    
-		// OLED_U8G2_draw_test();
-    res= mpu_dmp_get_data(&pitch,&roll,&yaw);
+    // HAL_UART_Transmit(&huart1,(uint8_t *)"hello world!\r\n",14,HAL_MAX_DELAY);
+    // printf("hello purui!\r\n");
+    // OLED_U8G2_draw_test();
+    //////////////////////////////  0.1s   /////////////////////////////////
+#ifdef MODULE_MPU6050
+    imu_data_t imu_data;
+    res= mpu_dmp_get_data(&imu_data);
     if(!res)
 		{
-			temp=MPU_Get_Temperature();							  //得到温度值
-			// MPU_Get_Accelerometer(&aacx,&aacy,&aacz);	//得到加速度传感器数据
-			// MPU_Get_Gyroscope(&gyrox,&gyroy,&gyroz);	//得到陀螺仪数据
-			
+			imu_data.temp = MPU_Get_Temperature();							  //锟矫碉拷锟铰讹拷值
+			// MPU_Get_Accelerometer(&imu_data);	//锟矫碉拷锟斤拷锟劫度达拷锟斤拷锟斤拷锟斤拷锟斤拷
+			// MPU_Get_Gyroscope(&imu_data);	//锟矫碉拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
 			// printf("Pitch:  %f\r\n",(float)pitch);
 			// printf("Roll:  %f\r\n",(float)roll);
 			// printf("yaw:  %f\r\n",(float)yaw);
-			printf("temp:  %.02f\r\n",((float)temp)/100);
-			printf("-----------------\r\n");
+			// printf("temp:  %.02f\r\n",((float)imu_data.temp)/100);printf("-----------------\r\n");
 		}else {
-      printf("mpu_dmp_get_data fail: %d\r\n",res);
+      ERR_LOG("mpu_dmp_get_data fail: %d\r\n", res);
     }
+#endif
     // OLED_U8G2_draw_buf(RxBuffer, RXBUF_LEN);
-    OLED_U8G2_draw_mpu6050(&pitch,&roll,&yaw,temp);
 
-		HAL_Delay(100);
+    //////////////////////////////  1s   ///////////////////////////////// 
+    if (loop_cnt % 100 == 0) {
+      HAL_GPIO_TogglePin(DOGGY_GPIO_Port, DOGGY_Pin);
+
+      // motor_test_pwm();
+      // motor_test_encoder();
+#ifdef MODULE_MPU6050   
+      // OLED_U8G2_draw_mpu6050(&imu_data);
+#endif
+    }
+    //////////////////////////////  50ms   ///////////////////////////////// 
+    if (loop_cnt % 5 == 3) {
+      car_motion_control_test_motor();
+      motor_kdr_data();
+    }
+
+		HAL_Delay(10);
+    loop_cnt++;
   }
   /* USER CODE END 3 */
 }
@@ -160,16 +190,23 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
+  /** Configure the main internal regulator output voltage
+  */
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -181,10 +218,10 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }

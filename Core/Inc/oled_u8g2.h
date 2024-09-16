@@ -4,6 +4,7 @@
 #include "stm32_u8g2.h"
 #include "main.h"
 #include "u8g2.h"
+#include "mpu6050.h"
  
 void testDrawProcess(u8g2_t *u8g2);
 void testShowFont(u8g2_t *u8g2);
@@ -20,7 +21,9 @@ void u8g2DrawTest(u8g2_t *u8g2);
 void OLED_U8G2_init(void);
 void OLED_U8G2_draw_test(void);
 void OLED_U8G2_draw_buf(uint8_t * buf, int buf_len);
-void OLED_U8G2_draw_mpu6050(float *pitch,float *roll,float *yaw,short temp);
+void OLED_U8G2_draw_hex(uint8_t * buf, int buf_len);
+void OLED_U8G2_draw_kdr(uint8_t * buf);
+void OLED_U8G2_draw_mpu6050(imu_data_t *);
 
 
 #endif

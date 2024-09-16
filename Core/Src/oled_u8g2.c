@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "kdr_com.h"
 
 
 static u8g2_t my_u8g2;
@@ -31,27 +32,81 @@ void OLED_U8G2_draw_buf(uint8_t * buf, int buf_len)
   char *tmp = malloc(sizeof(uint8_t)*buf_len +1);
   memcpy(tmp, buf, buf_len);
   tmp[buf_len] = '\0';
-	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB12_tf);
-  u8g2_DrawStr(&my_u8g2,8,16,"buf:");
-  u8g2_DrawStr(&my_u8g2,32,40,tmp);
+	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB08_tf);
+  char tmp2[24]={0};
+  sprintf(tmp2, "len:%d",buf_len);
+  u8g2_DrawStr(&my_u8g2,8,8,tmp2);
+  u8g2_DrawStr(&my_u8g2,64,8,"buf:");
+  u8g2_DrawStr(&my_u8g2,32,24,tmp);
 
   u8g2_SendBuffer(&my_u8g2);
   free(tmp);
 }
 
-void OLED_U8G2_draw_mpu6050(float *pitch,float *roll,float *yaw,short temp)
+void OLED_U8G2_draw_hex(uint8_t * buf, int buf_len)
+{
+  u8g2_ClearBuffer(&my_u8g2); 
+
+  char *tmp = malloc(sizeof(uint8_t)*buf_len*3+1);
+  for (int i = 0; i < buf_len; i++)
+  {
+    sprintf(tmp+3*i, "%02X,",buf[i]);
+  }
+  tmp[buf_len*3+1] = '\0';
+	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB08_tf);
+  char tmp2[24]={0};
+  sprintf(tmp2, "len:%d",buf_len);
+  u8g2_DrawStr(&my_u8g2,8,8,tmp2);
+  u8g2_DrawStr(&my_u8g2,64,8,"buf:");
+  u8g2_DrawStr(&my_u8g2,0,24,tmp);
+
+  u8g2_SendBuffer(&my_u8g2);
+  free(tmp);
+}
+
+void OLED_U8G2_draw_kdr(uint8_t * buf)
+{
+  u8g2_ClearBuffer(&my_u8g2); 
+
+  char *tmpx = malloc(sizeof(uint8_t)*KDR_DATA_BUF_LEN/2*3+1);
+  for (int i = 0; i < KDR_DATA_BUF_LEN/2; i++)
+  {
+    sprintf(tmpx+3*i, "%02X,",buf[i]);
+  }
+  tmpx[KDR_DATA_BUF_LEN/2*3+1] = '\0';
+  char *tmpy = malloc(sizeof(uint8_t)*KDR_DATA_BUF_LEN/2*3+1);
+  for (int i = 0; i < KDR_DATA_BUF_LEN/2; i++)
+  {
+    sprintf(tmpy+3*i, "%02X,",buf[i+KDR_DATA_BUF_LEN/2]);
+  }
+  tmpy[KDR_DATA_BUF_LEN/2*3+1] = '\0';
+  
+	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB08_tf);
+  char tmp2[24]={0};
+  sprintf(tmp2, "len:%d",KDR_DATA_BUF_LEN);
+  u8g2_DrawStr(&my_u8g2,8,8,tmp2);
+  u8g2_DrawStr(&my_u8g2,64,8,"kdr_buf:");
+  u8g2_DrawStr(&my_u8g2,0,24,tmpx);
+  u8g2_DrawStr(&my_u8g2,0,40,tmpy);
+
+  u8g2_SendBuffer(&my_u8g2);
+  free(tmpx);
+  free(tmpy);
+}
+
+void OLED_U8G2_draw_mpu6050(imu_data_t *data)
 {
   u8g2_ClearBuffer(&my_u8g2); 
 
   char tmp[30]={0};
 	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB12_tf);
-  sprintf(tmp, "pitch: %.04f", *pitch);
+  sprintf(tmp, "pitch: %.04f", data->pitch);
   u8g2_DrawStr(&my_u8g2,8,12, tmp);
-  sprintf(tmp, "roll: %.04f", *roll);
+  sprintf(tmp, "roll: %.04f", data->roll);
   u8g2_DrawStr(&my_u8g2,8,28,tmp);
-  sprintf(tmp, "yaw: %.04f", *yaw);
+  sprintf(tmp, "yaw: %.04f", data->yaw);
   u8g2_DrawStr(&my_u8g2,8,44, tmp);
-  sprintf(tmp, "temp: %.02f", ((float)temp)/100);
+  sprintf(tmp, "temp: %.02f", ((float)(data->temp))/100);
   u8g2_DrawStr(&my_u8g2,8,60, tmp);
 
   u8g2_SendBuffer(&my_u8g2);
@@ -71,7 +126,7 @@ void OLED_U8G2_draw_mpu6050(float *pitch,float *roll,float *yaw,short temp)
 
 
 /////////////////////////////////////////////////////////////////////////////////////
-//进度条显�?
+//进度条显�?
 void testDrawProcess(u8g2_t *u8g2)
 {
 	for(int i=10;i<=80;i=i+2)
@@ -82,13 +137,13 @@ void testDrawProcess(u8g2_t *u8g2)
 		sprintf(buff,"%d%%",(int)(i/80.0*100));
 		
 		u8g2_SetFont(u8g2,u8g2_font_ncenB12_tf);
-		u8g2_DrawStr(u8g2,16,32,"STM32 U8g2");//字�?�显�?
+		u8g2_DrawStr(u8g2,16,32,"STM32 U8g2");//字�?�显�?
 		
 		u8g2_SetFont(u8g2,u8g2_font_ncenB08_tf);
 		u8g2_DrawStr(u8g2,100,49,buff);//当前进度显示
 		
-		u8g2_DrawRBox(u8g2,16,40,i,10,4);//圆�?�填充�?�矩形�??
-		u8g2_DrawRFrame(u8g2,16,40,80,10,4);//圆�?�矩�?
+		u8g2_DrawRBox(u8g2,16,40,i,10,4);//圆�?�填充�?�矩形�??
+		u8g2_DrawRFrame(u8g2,16,40,80,10,4);//圆�?�矩�?
 		
 		u8g2_SendBuffer(u8g2);
 	}
@@ -96,8 +151,8 @@ void testDrawProcess(u8g2_t *u8g2)
 }
  
  
-//字体测试 数字英文�?选用 u8g2_font_ncenB..(�?) 系列字体
-//u8g2_font_unifont_t_symbols/u8g2_font_unifont_h_symbols(�? 圆润)
+//字体测试 数字英文�?选用 u8g2_font_ncenB..(�?) 系列字体
+//u8g2_font_unifont_t_symbols/u8g2_font_unifont_h_symbols(�? 圆润)
 void testShowFont(u8g2_t *u8g2)
 {
 	int t = 1000;
@@ -118,7 +173,7 @@ void testShowFont(u8g2_t *u8g2)
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 }
  
-//画空心矩�?
+//画空心矩�?
 void testDrawFrame(u8g2_t *u8g2)
 {
 	int t = 1000;
@@ -135,7 +190,7 @@ void testDrawFrame(u8g2_t *u8g2)
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 }
  
-//画实心圆角矩�?
+//画实心圆角矩�?
 void testDrawRBox(u8g2_t *u8g2)
 {
 	int t = 1000;
@@ -157,9 +212,9 @@ void testDrawRBox(u8g2_t *u8g2)
 void testDrawCircle(u8g2_t *u8g2)
 {
 	int t = 600;
-	int stx = 0;  //画图起�?�x
-	int sty = 16; //画图起�?�y
-	int with = 16;//一�?图块的间�?
+	int stx = 0;  //画图起�?�x
+	int sty = 16; //画图起�?�y
+	int with = 16;//一�?图块的间�?
 	int r = 15;   //圆的半径
 	u8g2_ClearBuffer(u8g2);
 	u8g2_DrawStr(u8g2, 0, 15, "DrawCircle");
@@ -172,20 +227,20 @@ void testDrawCircle(u8g2_t *u8g2)
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 	u8g2_DrawCircle(u8g2, stx - 1 + with * 4, sty, r, U8G2_DRAW_LOWER_LEFT); //左下
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
-	u8g2_DrawCircle(u8g2, stx - 1 + with * 2, sty - 1 + with * 2, r, U8G2_DRAW_ALL);//整个�?
+	u8g2_DrawCircle(u8g2, stx - 1 + with * 2, sty - 1 + with * 2, r, U8G2_DRAW_ALL);//整个�?
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 	
-    u8g2_DrawCircle(u8g2, 32*3, 32, 31, U8G2_DRAW_ALL);//右侧整个�?
+    u8g2_DrawCircle(u8g2, 32*3, 32, 31, U8G2_DRAW_ALL);//右侧整个�?
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 }
  
-//画实心椭�?
+//画实心椭�?
 void testDrawFilledEllipse(u8g2_t *u8g2)
 {
 	int t = 800;
-	int with = 16;//一�?图块的间�?
-	int rx = 27;  //�?圆x方向的半�?
-	int ry = 22;  //�?圆y方向的半�?
+	int with = 16;//一�?图块的间�?
+	int rx = 27;  //�?圆x方向的半�?
+	int ry = 22;  //�?圆y方向的半�?
 	u8g2_ClearBuffer(u8g2);
 	u8g2_DrawStr(u8g2,0, 14, "DrawFilledEllipse");
  
@@ -198,11 +253,11 @@ void testDrawFilledEllipse(u8g2_t *u8g2)
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 	u8g2_DrawFilledEllipse(u8g2, with * 4 - 1, with * 4 - 1, rx, ry, U8G2_DRAW_UPPER_LEFT); //左上
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
-	u8g2_DrawFilledEllipse(u8g2, with * 6, with * 2.5, rx, ry, U8G2_DRAW_ALL);//整个�?�?
+	u8g2_DrawFilledEllipse(u8g2, with * 6, with * 2.5, rx, ry, U8G2_DRAW_ALL);//整个�?�?
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 }
  
-//�?形测�?
+//�?形测�?
 void testDrawMulti(u8g2_t *u8g2)
 {
 	u8g2_ClearBuffer(u8g2);
@@ -230,14 +285,14 @@ void testDrawMulti(u8g2_t *u8g2)
 		u8g2_SendBuffer(u8g2);
 	}
 	
-	//实心圆�?�矩形逐渐变大
+	//实心圆�?�矩形逐渐变大
 	u8g2_ClearBuffer(u8g2);
 	for(int i=30; i>0; i-=2)
 	{
 		u8g2_DrawRBox(u8g2,i*2,i,128-i*4,64-2*i,10-i/3);
 		u8g2_SendBuffer(u8g2);
 	}
-    //空心圆�?�矩形逐渐变小
+    //空心圆�?�矩形逐渐变小
 	u8g2_ClearBuffer(u8g2);
 	for(int i=0; i<32; i+=2)
 	{
@@ -260,14 +315,14 @@ void testDrawMulti(u8g2_t *u8g2)
 		u8g2_SendBuffer(u8g2);
 	}
 	
-	//实心�?圆逐渐变大
+	//实心�?圆逐渐变大
     u8g2_ClearBuffer(u8g2);
 	for(int i=2; i<32; i+=3)
 	{
 		u8g2_DrawFilledEllipse(u8g2,64,32, i*2, i, U8G2_DRAW_ALL);
 		u8g2_SendBuffer(u8g2);
 	}
-    //空心�?圆逐渐变小
+    //空心�?圆逐渐变小
     u8g2_ClearBuffer(u8g2);
 	for(int i=32; i>0; i-=3)
 	{

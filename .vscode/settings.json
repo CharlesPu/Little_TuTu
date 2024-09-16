@@ -1,6 +1,14 @@
 {
   "files.associations": {
     "mpuiic.h": "c",
-    "inv_mpu_dmp_motion_driver.h": "c"
+    "inv_mpu_dmp_motion_driver.h": "c",
+    "main.h": "c",
+    "motor.h": "c",
+    "tim.h": "c",
+    "stdarg.h": "c",
+    "time.h": "c",
+    "pid.h": "c",
+    "motion.h": "c",
+    "oled_u8g2.h": "c"
   }
 }

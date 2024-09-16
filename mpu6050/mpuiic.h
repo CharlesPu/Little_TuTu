@@ -2,8 +2,8 @@
 #define __MPUIIC_H
 #include "gpio.h"
 
-//IO·½ÏòÉèÖÃ  ---PB11
-// #define MPU_SDA_IN()  {GPIOB->CRH &= 0XFFFF0FFF;GPIOB->CRH |= 8<<12;}   //ÉÏÀ­/ÏÂÀ­ ÊäÈëÄ£Ê½
+//IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ---PB11
+// #define MPU_SDA_IN()  {GPIOB->CRH &= 0XFFFF0FFF;GPIOB->CRH |= 8<<12;}   //ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 // #define MPU_SDA_IN() \
 //   GPIO_InitTypeDef GPIO_InitStruct = {0};\
 //   GPIO_InitStruct.Pin = MPU_I2C_SDA_Pin;\
@@ -12,7 +12,7 @@
 //   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;\
 //   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-// #define MPU_SDA_OUT() {GPIOB->CRH &= 0XFFFF0FFF;GPIOB->CRH |= 3<<12;}		//ÍÆÍìÊä³ö  Êä³öÄ£Ê½
+// #define MPU_SDA_OUT() {GPIOB->CRH &= 0XFFFF0FFF;GPIOB->CRH |= 3<<12;}		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½Ä£Ê½
 // #define MPU_SDA_OUT() \
 //   GPIO_InitTypeDef GPIO_InitStruct = {0};\
 //   GPIO_InitStruct.Pin = MPU_I2C_SDA_Pin;\
@@ -21,10 +21,11 @@
 //   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;\
 //   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-//IO²Ù×÷º¯Êý	 
+//IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	 
 // #define MPU_IIC_SCL    PBout(10) 		//SCL
 // #define MPU_IIC_SDA    PBout(11) 		//SDA	 
-// #define MPU_READ_SDA   PBin(11) 		//ÊäÈëSDA 
+// #define MPU_READ_SDA   PBin(11) 		//ï¿½ï¿½ï¿½ï¿½SDA 
+// æ³¨æ„ä½¿ç”¨è½¯ä»¶iicï¼Œè€Œä¸æ˜¯ç¡¬ä»¶ï¼
 #define MPU_IIC_SCL_H() HAL_GPIO_WritePin(GPIOB, MPU_I2C_SCL_Pin, GPIO_PIN_SET)
 #define MPU_IIC_SCL_L() HAL_GPIO_WritePin(GPIOB, MPU_I2C_SCL_Pin, GPIO_PIN_RESET)
 
@@ -34,16 +35,16 @@
 #define MPU_READ_SDA() HAL_GPIO_ReadPin(GPIOB, MPU_I2C_SDA_Pin)
 
 
-//IICËùÓÐ²Ù×÷º¯Êý
-void MPU_IIC_Delay(void);								//IICÑÓÊ±2msº¯Êý
-void MPU_IIC_Init(void);                //³õÊ¼»¯IICµÄIO¿Ú				 
-void MPU_IIC_Start(void);								//·¢ËÍIIC¿ªÊ¼ÐÅºÅ
-void MPU_IIC_Stop(void);	  						//·¢ËÍIICÍ£Ö¹ÐÅºÅ
-void MPU_IIC_Send_Byte(uint8_t txd);					//IIC·¢ËÍÒ»¸ö×Ö½Ú
-uint8_t MPU_IIC_Read_Byte(unsigned char ack);//IIC¶ÁÈ¡Ò»¸ö×Ö½Ú
-uint8_t MPU_IIC_Wait_Ack(void); 							//IICµÈ´ýACKÐÅºÅ
-void MPU_IIC_Ack(void);									//IIC·¢ËÍACKÐÅºÅ
-void MPU_IIC_NAck(void);								//IIC²»·¢ËÍACKÐÅºÅ
+//IICï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void MPU_IIC_Delay(void);								//IICï¿½ï¿½Ê±2msï¿½ï¿½ï¿½ï¿½
+void MPU_IIC_Init(void);                //ï¿½ï¿½Ê¼ï¿½ï¿½IICï¿½ï¿½IOï¿½ï¿½				 
+void MPU_IIC_Start(void);								//ï¿½ï¿½ï¿½ï¿½IICï¿½ï¿½Ê¼ï¿½Åºï¿½
+void MPU_IIC_Stop(void);	  						//ï¿½ï¿½ï¿½ï¿½IICÍ£Ö¹ï¿½Åºï¿½
+void MPU_IIC_Send_Byte(uint8_t txd);					//IICï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+uint8_t MPU_IIC_Read_Byte(unsigned char ack);//IICï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+uint8_t MPU_IIC_Wait_Ack(void); 							//IICï¿½È´ï¿½ACKï¿½Åºï¿½
+void MPU_IIC_Ack(void);									//IICï¿½ï¿½ï¿½ï¿½ACKï¿½Åºï¿½
+void MPU_IIC_NAck(void);								//IICï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ACKï¿½Åºï¿½
 
 
 void IMPU_IC_Write_One_Byte(uint8_t daddr,uint8_t addr,uint8_t data);

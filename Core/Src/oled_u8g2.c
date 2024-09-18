@@ -2,7 +2,6 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
-#include "kdr_com.h"
 
 
 static u8g2_t my_u8g2;
@@ -64,30 +63,30 @@ void OLED_U8G2_draw_hex(uint8_t * buf, int buf_len)
   free(tmp);
 }
 
-void OLED_U8G2_draw_kdr(uint8_t * buf)
+void OLED_U8G2_draw_kdr(uint8_t * buf, uint8_t len)
 {
   u8g2_ClearBuffer(&my_u8g2); 
 
-  char *tmpx = malloc(sizeof(uint8_t)*KDR_DATA_BUF_LEN/2*3+1);
-  for (int i = 0; i < KDR_DATA_BUF_LEN/2; i++)
+  char *tmpx = malloc(sizeof(uint8_t)*len/2*3+1);
+  for (int i = 0; i < len/2; i++)
   {
     sprintf(tmpx+3*i, "%02X,",buf[i]);
   }
-  tmpx[KDR_DATA_BUF_LEN/2*3+1] = '\0';
-  char *tmpy = malloc(sizeof(uint8_t)*KDR_DATA_BUF_LEN/2*3+1);
-  for (int i = 0; i < KDR_DATA_BUF_LEN/2; i++)
+  tmpx[len/2*3+1] = '\0';
+  char *tmpy = malloc(sizeof(uint8_t)*len/2*3+1);
+  for (int i = 0; i < len/2; i++)
   {
-    sprintf(tmpy+3*i, "%02X,",buf[i+KDR_DATA_BUF_LEN/2]);
+    sprintf(tmpy+3*i, "%02X,",buf[i+len/2]);
   }
-  tmpy[KDR_DATA_BUF_LEN/2*3+1] = '\0';
+  tmpy[len/2*3+1] = '\0';
   
-	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB08_tf);
+	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB10_tf);
   char tmp2[24]={0};
-  sprintf(tmp2, "len:%d",KDR_DATA_BUF_LEN);
-  u8g2_DrawStr(&my_u8g2,8,8,tmp2);
-  u8g2_DrawStr(&my_u8g2,64,8,"kdr_buf:");
-  u8g2_DrawStr(&my_u8g2,0,24,tmpx);
-  u8g2_DrawStr(&my_u8g2,0,40,tmpy);
+  sprintf(tmp2, "len: %d",len);
+  u8g2_DrawStr(&my_u8g2,0,16,tmp2);
+  u8g2_DrawStr(&my_u8g2,72,16,"kdr:");
+  u8g2_DrawStr(&my_u8g2,0,38,tmpx);
+  u8g2_DrawStr(&my_u8g2,0,58,tmpy);
 
   u8g2_SendBuffer(&my_u8g2);
   free(tmpx);

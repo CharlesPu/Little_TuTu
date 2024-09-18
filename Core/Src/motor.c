@@ -165,6 +165,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   // printf("aaaaaa");
   if (htim->Instance == TIM_ENCODER_CALC.Instance){
+    // todo 这里可以根据实际转向手动调整定义
     motor_A1.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_A1.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;
     motor_A1.encoder_data.raw_value =__HAL_TIM_GET_COUNTER(motor_A1.tim_encoder);
     // mm/s
@@ -174,8 +175,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
     motor_A2.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_A2.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;
     motor_A2.encoder_data.raw_value =__HAL_TIM_GET_COUNTER(motor_A2.tim_encoder);
-    // mm/s
-    motor_A2.encoder_data.calc_value = ((float)motor_A2.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
+    // mm/s 调整方向
+    motor_A2.encoder_data.calc_value = -((float)motor_A2.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
     motor_A2.speed_current = (int16_t)(motor_A2.encoder_data.calc_value);
     __HAL_TIM_SetCounter(motor_A2.tim_encoder, 0);
 
@@ -192,7 +193,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     motor_B2.encoder_data.calc_value = ((float)motor_B2.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
     motor_B2.speed_current = (int16_t)(motor_B2.encoder_data.calc_value);
     __HAL_TIM_SetCounter(motor_B2.tim_encoder, 0);
-
   }
 }
 

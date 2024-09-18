@@ -8,6 +8,7 @@
 "little_tutu\motion.o"
 "little_tutu\main.o"
 "little_tutu\gpio.o"
+"little_tutu\dma.o"
 "little_tutu\i2c.o"
 "little_tutu\tim.o"
 "little_tutu\usart.o"

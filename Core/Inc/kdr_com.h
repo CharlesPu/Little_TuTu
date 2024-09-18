@@ -15,6 +15,7 @@ typedef int int32;
 
 //串口发送函数定义，替换成自己的函数
 #define KDCOM_SendData(pdata, length)    HAL_UART_Transmit(&huart3, (uint8_t*)pdata, length, 10)
+// #define KDCOM_SendData(pdata, length)    HAL_UART_Transmit_DMA(&huart3, (uint8_t*)pdata, length)// note:后面的发送都会被搁置，连续发送时不能用
 // #define KDCOM_SendData(pdata, length)  HAL_UART_Transmit_IT(&huart3,(uint8_t *)pdata,length) // note:后面的发送都会被搁置，连续发送时不能用
 // #define KDCOM_SendData(pdata, length) \
 //   do\

@@ -58,14 +58,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MA1_DX_Pin GPIO_PIN_2
-#define MA1_DX_GPIO_Port GPIOE
-#define MA1_DY_Pin GPIO_PIN_3
-#define MA1_DY_GPIO_Port GPIOE
-#define MA2_DX_Pin GPIO_PIN_4
-#define MA2_DX_GPIO_Port GPIOE
-#define MA2_DY_Pin GPIO_PIN_5
+#define MA2_DY_Pin GPIO_PIN_2
 #define MA2_DY_GPIO_Port GPIOE
+#define MA2_DX_Pin GPIO_PIN_3
+#define MA2_DX_GPIO_Port GPIOE
+#define MA1_DX_Pin GPIO_PIN_4
+#define MA1_DX_GPIO_Port GPIOE
+#define MA1_DY_Pin GPIO_PIN_5
+#define MA1_DY_GPIO_Port GPIOE
 #define MA12_STBY_Pin GPIO_PIN_0
 #define MA12_STBY_GPIO_Port GPIOC
 #define TMP_EA1_VCC_Pin GPIO_PIN_2
@@ -76,8 +76,6 @@ void Error_Handler(void);
 #define EA1_A_GPIO_Port GPIOA
 #define EA1_B_Pin GPIO_PIN_1
 #define EA1_B_GPIO_Port GPIOA
-#define EA2_A_Pin GPIO_PIN_5
-#define EA2_A_GPIO_Port GPIOA
 #define EB1_A_Pin GPIO_PIN_6
 #define EB1_A_GPIO_Port GPIOA
 #define EB1_B_Pin GPIO_PIN_7
@@ -96,10 +94,10 @@ void Error_Handler(void);
 #define MPU_I2C_SCL_GPIO_Port GPIOB
 #define MPU_I2C_SDA_Pin GPIO_PIN_11
 #define MPU_I2C_SDA_GPIO_Port GPIOB
-#define BLE_RX_Pin GPIO_PIN_8
-#define BLE_RX_GPIO_Port GPIOD
-#define BLE_TX_Pin GPIO_PIN_9
-#define BLE_TX_GPIO_Port GPIOD
+#define BLE_KDR_TX_Pin GPIO_PIN_8
+#define BLE_KDR_TX_GPIO_Port GPIOD
+#define BLE_KDR_RX_Pin GPIO_PIN_9
+#define BLE_KDR_RX_GPIO_Port GPIOD
 #define MB2_DY_Pin GPIO_PIN_10
 #define MB2_DY_GPIO_Port GPIOD
 #define DOGGY_Pin GPIO_PIN_11
@@ -114,6 +112,12 @@ void Error_Handler(void);
 #define EB2_A_GPIO_Port GPIOC
 #define EB2_B_Pin GPIO_PIN_7
 #define EB2_B_GPIO_Port GPIOC
+#define EA2_A_Pin GPIO_PIN_15
+#define EA2_A_GPIO_Port GPIOA
+#define BLE_CTRL_TX_Pin GPIO_PIN_5
+#define BLE_CTRL_TX_GPIO_Port GPIOD
+#define BLE_CTRL_RX_Pin GPIO_PIN_6
+#define BLE_CTRL_RX_GPIO_Port GPIOD
 #define EA2_B_Pin GPIO_PIN_3
 #define EA2_B_GPIO_Port GPIOB
 #define OLED_SCL_Pin GPIO_PIN_6

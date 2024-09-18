@@ -29,7 +29,10 @@
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_usart3_rx;
+DMA_HandleTypeDef hdma_usart3_tx;
 
 /* USART1 init function */
 
@@ -58,6 +61,35 @@ void MX_USART1_UART_Init(void)
   /* USER CODE BEGIN USART1_Init 2 */
 
   /* USER CODE END USART1_Init 2 */
+
+}
+/* USART2 init function */
+
+void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
 
 }
 /* USART3 init function */
@@ -118,6 +150,30 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 
   /* USER CODE END USART1_MspInit 1 */
   }
+  else if(uartHandle->Instance==USART2)
+  {
+  /* USER CODE BEGIN USART2_MspInit 0 */
+
+  /* USER CODE END USART2_MspInit 0 */
+    /* USART2 clock enable */
+    __HAL_RCC_USART2_CLK_ENABLE();
+
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+    /**USART2 GPIO Configuration
+    PD5     ------> USART2_TX
+    PD6     ------> USART2_RX
+    */
+    GPIO_InitStruct.Pin = BLE_CTRL_TX_Pin|BLE_CTRL_RX_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN USART2_MspInit 1 */
+
+  /* USER CODE END USART2_MspInit 1 */
+  }
   else if(uartHandle->Instance==USART3)
   {
   /* USER CODE BEGIN USART3_MspInit 0 */
@@ -131,15 +187,52 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     PD8     ------> USART3_TX
     PD9     ------> USART3_RX
     */
-    GPIO_InitStruct.Pin = BLE_RX_Pin|BLE_TX_Pin;
+    GPIO_InitStruct.Pin = BLE_KDR_TX_Pin|BLE_KDR_RX_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
+    /* USART3 DMA Init */
+    /* USART3_RX Init */
+    hdma_usart3_rx.Instance = DMA1_Stream1;
+    hdma_usart3_rx.Init.Channel = DMA_CHANNEL_4;
+    hdma_usart3_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_usart3_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart3_rx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart3_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart3_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart3_rx.Init.Mode = DMA_NORMAL;
+    hdma_usart3_rx.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_usart3_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    if (HAL_DMA_Init(&hdma_usart3_rx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(uartHandle,hdmarx,hdma_usart3_rx);
+
+    /* USART3_TX Init */
+    hdma_usart3_tx.Instance = DMA1_Stream3;
+    hdma_usart3_tx.Init.Channel = DMA_CHANNEL_4;
+    hdma_usart3_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_usart3_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart3_tx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart3_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart3_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart3_tx.Init.Mode = DMA_NORMAL;
+    hdma_usart3_tx.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_usart3_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    if (HAL_DMA_Init(&hdma_usart3_tx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart3_tx);
+
     /* USART3 interrupt Init */
-    HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(USART3_IRQn, 15, 0);
     HAL_NVIC_EnableIRQ(USART3_IRQn);
   /* USER CODE BEGIN USART3_MspInit 1 */
 
@@ -168,6 +261,24 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
   /* USER CODE END USART1_MspDeInit 1 */
   }
+  else if(uartHandle->Instance==USART2)
+  {
+  /* USER CODE BEGIN USART2_MspDeInit 0 */
+
+  /* USER CODE END USART2_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_USART2_CLK_DISABLE();
+
+    /**USART2 GPIO Configuration
+    PD5     ------> USART2_TX
+    PD6     ------> USART2_RX
+    */
+    HAL_GPIO_DeInit(GPIOD, BLE_CTRL_TX_Pin|BLE_CTRL_RX_Pin);
+
+  /* USER CODE BEGIN USART2_MspDeInit 1 */
+
+  /* USER CODE END USART2_MspDeInit 1 */
+  }
   else if(uartHandle->Instance==USART3)
   {
   /* USER CODE BEGIN USART3_MspDeInit 0 */
@@ -180,7 +291,11 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
     PD8     ------> USART3_TX
     PD9     ------> USART3_RX
     */
-    HAL_GPIO_DeInit(GPIOD, BLE_RX_Pin|BLE_TX_Pin);
+    HAL_GPIO_DeInit(GPIOD, BLE_KDR_TX_Pin|BLE_KDR_RX_Pin);
+
+    /* USART3 DMA DeInit */
+    HAL_DMA_DeInit(uartHandle->hdmarx);
+    HAL_DMA_DeInit(uartHandle->hdmatx);
 
     /* USART3 interrupt Deinit */
     HAL_NVIC_DisableIRQ(USART3_IRQn);
@@ -205,40 +320,68 @@ int fgetc(FILE *f)
     HAL_UART_Receive(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
     return (ch);
 }
-/// kdrobot上位机数据处�?????? /////////////////////////////////////////////////////////
+/// kdrobot上位机数据处�????????? /////////////////////////////////////////////////////////
 uint8_t g_kdr_rx_buffer[KDR_DATA_BUF_LEN];
 uint8_t TxBuffer[] = "I received!";
-
+// 中断模式的处�?? 
+// deprecated
 void uart_it_init(void)
 {
-  HAL_UART_Receive_IT(&huart3, (uint8_t *)g_kdr_rx_buffer, KDR_DATA_BUF_LEN);// �?????????????用接�?????????????
+  HAL_UART_Receive_IT(&USART_BLE_KDR, (uint8_t *)g_kdr_rx_buffer, KDR_DATA_BUF_LEN);// �????????????????用接�????????????????
 }
 
  // 注意！！！！ 读满RxBuffer才会进入下面的处理函数！
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  if (huart->Instance == huart3.Instance)		//确认串口为USART1
+  if (huart->Instance == USART_BLE_KDR.Instance)		//确认串口为USART1
     {
-        // HAL_UART_Transmit_IT(&huart1,(uint8_t *)TxBuffer,sizeof(TxBuffer));		//发�?�Wilco表明已收到数�????????
+        // HAL_UART_Transmit_IT(&huart1,(uint8_t *)TxBuffer,sizeof(TxBuffer));		//发�?�Wilco表明已收到数�???????????
         // GPIO_PinState state;		//定义引脚状�??
-        // if (RxBuffer[0] == '1')		//如果接收到的数据第二位为�????????1�????????
+        // if (RxBuffer[0] == '1')		//如果接收到的数据第二位为�???????????1�???????????
         // {
-        //     state = GPIO_PIN_RESET;		//下拉引脚电平（即点亮LED�????????
+        //     state = GPIO_PIN_RESET;		//下拉引脚电平（即点亮LED�???????????
         // }
         // if (RxBuffer[0] == '0')		
         // {
-        //     state = GPIO_PIN_SET;		//下拉引脚电平（即点亮LED�????????
+        //     state = GPIO_PIN_SET;		//下拉引脚电平（即点亮LED�???????????
         // }
 		    // HAL_GPIO_WritePin(DOGGY_GPIO_Port, DOGGY_Pin, state);
-        HAL_GPIO_TogglePin(KITTEN_GPIO_Port, KITTEN_Pin);
+        // HAL_GPIO_TogglePin(KITTEN_GPIO_Port, KITTEN_Pin);
 
-        OLED_U8G2_draw_kdr(g_kdr_rx_buffer);
+        // OLED_U8G2_draw_kdr(g_kdr_rx_buffer, KDR_DATA_BUF_LEN);
 
-        motor_kdr_cmd(g_kdr_rx_buffer);
+        // motor_kdr_cmd(g_kdr_rx_buffer);
 
-        // printf("xxxx%d\r\n",res); //note:!!!!串口中断中不能有其他串口的发送！
-        memset(g_kdr_rx_buffer,0,KDR_DATA_BUF_LEN);
-        HAL_UART_Receive_IT(&huart3,(uint8_t *)g_kdr_rx_buffer,KDR_DATA_BUF_LEN);	//再次启用接收
+        // // printf("xxxx%d\r\n",res); //note:!!!!串口中断中不能有其他串口的发送！
+        // memset(g_kdr_rx_buffer,0,KDR_DATA_BUF_LEN);
+        // HAL_UART_Receive_IT(&USART_BLE_KDR,(uint8_t *)g_kdr_rx_buffer,KDR_DATA_BUF_LEN);	//再次启用接收
     }
 }
+// DMA模式的中断处�??
+uint8_t g_kdr_rx_buffer_dma[KDR_DATA_BUF_LEN];
+
+void uart_dma_it_init(void)
+{
+  __HAL_UART_ENABLE_IT(&USART_BLE_KDR, UART_IT_IDLE);
+  HAL_UART_Receive_DMA(&USART_BLE_KDR, g_kdr_rx_buffer_dma,KDR_DATA_BUF_LEN);
+}
+void USART3_IRQHandler_dma(void)
+{
+  if (__HAL_UART_GET_FLAG(&USART_BLE_KDR,UART_FLAG_IDLE) != RESET)
+  {
+    __HAL_UART_CLEAR_IDLEFLAG(&USART_BLE_KDR);
+    HAL_UART_DMAStop(&USART_BLE_KDR);
+
+    uint8_t rx_len = KDR_DATA_BUF_LEN - __HAL_DMA_GET_COUNTER(&hdma_usart3_rx);
+    HAL_GPIO_TogglePin(KITTEN_GPIO_Port, KITTEN_Pin);
+
+    OLED_U8G2_draw_kdr(g_kdr_rx_buffer_dma, rx_len);
+    motor_kdr_cmd(g_kdr_rx_buffer_dma);
+
+    // printf("xxxx%d\r\n",res); //note:!!!!串口中断中不能有其他串口的发送！
+    memset(g_kdr_rx_buffer_dma, 0, KDR_DATA_BUF_LEN);
+    HAL_UART_Receive_DMA(&USART_BLE_KDR, g_kdr_rx_buffer_dma,KDR_DATA_BUF_LEN);
+  }
+}
+
 /* USER CODE END 1 */

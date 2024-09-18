@@ -22,7 +22,7 @@ void OLED_U8G2_init(void);
 void OLED_U8G2_draw_test(void);
 void OLED_U8G2_draw_buf(uint8_t * buf, int buf_len);
 void OLED_U8G2_draw_hex(uint8_t * buf, int buf_len);
-void OLED_U8G2_draw_kdr(uint8_t * buf);
+void OLED_U8G2_draw_kdr(uint8_t * buf, uint8_t);
 void OLED_U8G2_draw_mpu6050(imu_data_t *);
 
 

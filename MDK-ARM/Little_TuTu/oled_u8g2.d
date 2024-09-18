@@ -45,5 +45,3 @@ little_tutu\oled_u8g2.o: ../mpu6050/mpuiic.h
 little_tutu\oled_u8g2.o: ../Core/Inc/gpio.h
 little_tutu\oled_u8g2.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 little_tutu\oled_u8g2.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-little_tutu\oled_u8g2.o: ../Core/Inc/kdr_com.h
-little_tutu\oled_u8g2.o: ../Core/Inc/usart.h

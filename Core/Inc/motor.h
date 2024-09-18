@@ -36,7 +36,7 @@ typedef enum
 } ENCODER_NAME;
 
 typedef struct {
-  MOTOR_DIRECTION dir;
+  MOTOR_DIRECTION dir; // todo 暂时没用到
   int32_t raw_value;
   float calc_value;
 }encoder_data_t;

@@ -58,10 +58,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MA2_DY_Pin GPIO_PIN_2
-#define MA2_DY_GPIO_Port GPIOE
-#define MA2_DX_Pin GPIO_PIN_3
-#define MA2_DX_GPIO_Port GPIOE
+#define MB1_DY_Pin GPIO_PIN_2
+#define MB1_DY_GPIO_Port GPIOE
+#define MB1_DX_Pin GPIO_PIN_3
+#define MB1_DX_GPIO_Port GPIOE
 #define MA1_DX_Pin GPIO_PIN_4
 #define MA1_DX_GPIO_Port GPIOE
 #define MA1_DY_Pin GPIO_PIN_5
@@ -86,8 +86,6 @@ void Error_Handler(void);
 #define MA2_PWM_GPIO_Port GPIOE
 #define MB1_PWM_Pin GPIO_PIN_13
 #define MB1_PWM_GPIO_Port GPIOE
-#define MB2_PWM_Pin GPIO_PIN_14
-#define MB2_PWM_GPIO_Port GPIOE
 #define KITTEN_Pin GPIO_PIN_15
 #define KITTEN_GPIO_Port GPIOE
 #define MPU_I2C_SCL_Pin GPIO_PIN_10
@@ -98,26 +96,32 @@ void Error_Handler(void);
 #define BLE_KDR_TX_GPIO_Port GPIOD
 #define BLE_KDR_RX_Pin GPIO_PIN_9
 #define BLE_KDR_RX_GPIO_Port GPIOD
-#define MB2_DY_Pin GPIO_PIN_10
-#define MB2_DY_GPIO_Port GPIOD
+#define MA2_DY_Pin GPIO_PIN_10
+#define MA2_DY_GPIO_Port GPIOD
 #define DOGGY_Pin GPIO_PIN_11
 #define DOGGY_GPIO_Port GPIOD
-#define MB1_DX_Pin GPIO_PIN_12
-#define MB1_DX_GPIO_Port GPIOD
-#define MB1_DY_Pin GPIO_PIN_13
-#define MB1_DY_GPIO_Port GPIOD
+#define MA2_DX_Pin GPIO_PIN_12
+#define MA2_DX_GPIO_Port GPIOD
+#define MB2_DY_Pin GPIO_PIN_13
+#define MB2_DY_GPIO_Port GPIOD
 #define MB2_DX_Pin GPIO_PIN_14
 #define MB2_DX_GPIO_Port GPIOD
 #define EB2_A_Pin GPIO_PIN_6
 #define EB2_A_GPIO_Port GPIOC
 #define EB2_B_Pin GPIO_PIN_7
 #define EB2_B_GPIO_Port GPIOC
+#define MB2_PWM_Pin GPIO_PIN_11
+#define MB2_PWM_GPIO_Port GPIOA
 #define EA2_A_Pin GPIO_PIN_15
 #define EA2_A_GPIO_Port GPIOA
+#define US_TRIG_Pin GPIO_PIN_4
+#define US_TRIG_GPIO_Port GPIOD
 #define BLE_CTRL_TX_Pin GPIO_PIN_5
 #define BLE_CTRL_TX_GPIO_Port GPIOD
 #define BLE_CTRL_RX_Pin GPIO_PIN_6
 #define BLE_CTRL_RX_GPIO_Port GPIOD
+#define US_ECHO_Pin GPIO_PIN_7
+#define US_ECHO_GPIO_Port GPIOD
 #define EA2_B_Pin GPIO_PIN_3
 #define EA2_B_GPIO_Port GPIOB
 #define OLED_SCL_Pin GPIO_PIN_6

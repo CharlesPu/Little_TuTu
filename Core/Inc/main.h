@@ -66,6 +66,8 @@ void Error_Handler(void);
 #define MA1_DX_GPIO_Port GPIOE
 #define MA1_DY_Pin GPIO_PIN_5
 #define MA1_DY_GPIO_Port GPIOE
+#define BUZZER_Pin GPIO_PIN_13
+#define BUZZER_GPIO_Port GPIOC
 #define MA12_STBY_Pin GPIO_PIN_0
 #define MA12_STBY_GPIO_Port GPIOC
 #define TMP_EA1_VCC_Pin GPIO_PIN_2
@@ -114,14 +116,14 @@ void Error_Handler(void);
 #define MB2_PWM_GPIO_Port GPIOA
 #define EA2_A_Pin GPIO_PIN_15
 #define EA2_A_GPIO_Port GPIOA
-#define US_TRIG_Pin GPIO_PIN_4
-#define US_TRIG_GPIO_Port GPIOD
+#define HC_SR04_TRIG_Pin GPIO_PIN_4
+#define HC_SR04_TRIG_GPIO_Port GPIOD
 #define BLE_CTRL_TX_Pin GPIO_PIN_5
 #define BLE_CTRL_TX_GPIO_Port GPIOD
 #define BLE_CTRL_RX_Pin GPIO_PIN_6
 #define BLE_CTRL_RX_GPIO_Port GPIOD
-#define US_ECHO_Pin GPIO_PIN_7
-#define US_ECHO_GPIO_Port GPIOD
+#define HC_SR04_ECHO_Pin GPIO_PIN_7
+#define HC_SR04_ECHO_GPIO_Port GPIOD
 #define EA2_B_Pin GPIO_PIN_3
 #define EA2_B_GPIO_Port GPIOB
 #define OLED_SCL_Pin GPIO_PIN_6
@@ -152,6 +154,8 @@ void Error_Handler(void);
 #define ERR_LOG(format, ...) LOG(ERR, format, ##__VA_ARGS__)
 
 // #define MODULE_MPU6050
+// #define MODULE_HC_SR04
+// #define MODULE_KDR_REPORTER
 
 /* USER CODE END Private defines */
 

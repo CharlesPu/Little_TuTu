@@ -16,6 +16,18 @@ static u8g2_t my_u8g2;
 void OLED_U8G2_init(void)
 {
   u8g2Init(&my_u8g2);
+  OLED_U8G2_init_animation();
+}
+
+void OLED_U8G2_init_animation(void)
+{
+  u8g2_ClearBuffer(&my_u8g2); 
+
+	u8g2_SetFont(&my_u8g2,u8g2_font_lubBI24_tf);
+  u8g2_DrawStr(&my_u8g2,0,32,"X TuTu");
+  u8g2_DrawStr(&my_u8g2,16,64,"Start!");
+
+  u8g2_SendBuffer(&my_u8g2);
 }
 
 void OLED_U8G2_draw_test(void) 
@@ -111,6 +123,18 @@ void OLED_U8G2_draw_mpu6050(imu_data_t *data)
   u8g2_SendBuffer(&my_u8g2);
 }
 
+void OLED_U8G2_draw_hc_sr04(uint16_t mm)
+{
+  u8g2_ClearBuffer(&my_u8g2); 
+
+  char tmp[30]={0};
+	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB12_tf);
+  u8g2_DrawStr(&my_u8g2,0,12, "distance:");
+  sprintf(tmp, "%d mm", mm);
+  u8g2_DrawStr(&my_u8g2,0,40, tmp);
+
+  u8g2_SendBuffer(&my_u8g2);
+}
 
 
 
@@ -167,7 +191,7 @@ void testShowFont(u8g2_t *u8g2)
 	u8g2_DrawStr(u8g2,0,30,testStr);
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 	
-    u8g2_SetFont(u8g2,u8g2_font_ncenB10_tr);
+  u8g2_SetFont(u8g2,u8g2_font_ncenB10_tr);
 	u8g2_DrawStr(u8g2,0,60,testStr);
 	SEND_BUFFER_DISPLAY_MS(u8g2,t);
 }

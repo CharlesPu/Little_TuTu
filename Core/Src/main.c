@@ -30,6 +30,8 @@
 #include "oled_u8g2.h"
 #include "motor.h"
 #include "motion.h"
+#include "hc_sr04.h"
+#include "buzzer.h"
 
 #ifdef MODULE_MPU6050
 #include "mpu6050.h"
@@ -113,10 +115,13 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM7_Init();
   MX_USART2_UART_Init();
+  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   // uart_it_init();
   uart_dma_it_init();
+  HC_SR04_init();
   OLED_U8G2_init();
+  BUZZER_init();
 
 #ifdef MODULE_MPU6050
   MPU_Init();					       //��ʼ��MPU6050
@@ -129,6 +134,9 @@ int main(void)
 
   motor_init();
   motor_encoder_init();
+
+  HAL_Delay(2000);
+  BUZZER_beep_twice();
   INF_LOG("little tutu start!\r\n");
   
   /* USER CODE END 2 */
@@ -161,12 +169,15 @@ int main(void)
       ERR_LOG("mpu_dmp_get_data fail: %d\r\n", res);
     }
 #endif
-    // OLED_U8G2_draw_buf(RxBuffer, RXBUF_LEN);
-
     //////////////////////////////  1s   ///////////////////////////////// 
     if (loop_cnt % 100 == 0) {
       HAL_GPIO_TogglePin(DOGGY_GPIO_Port, DOGGY_Pin);
 
+#ifdef MODULE_HC_SR04
+      uint16_t mm = HC_SR04_sonar_mm();
+      printf("hc_sr04 sonar distance: %d mm\r\n",mm);
+      OLED_U8G2_draw_hc_sr04(mm);
+#endif
       // motor_test_pwm();
       // motor_test_encoder();
 #ifdef MODULE_MPU6050   
@@ -175,8 +186,11 @@ int main(void)
     }
     //////////////////////////////  50ms   ///////////////////////////////// 
     if (loop_cnt % 5 == 3) {
-      car_motion_control_test_motor();
+      // car_motion_control_test_motor();
+
+#ifdef MODULE_KDR_REPORTER
       motor_kdr_data();
+#endif
     }
 
 		HAL_Delay(10);

@@ -26,11 +26,14 @@
 #include "kdr_com.h"
 #include <string.h>
 #include "motor.h"
+#include "motion.h"
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_usart2_rx;
+DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart3_rx;
 DMA_HandleTypeDef hdma_usart3_tx;
 
@@ -170,6 +173,46 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
+    /* USART2 DMA Init */
+    /* USART2_RX Init */
+    hdma_usart2_rx.Instance = DMA1_Stream5;
+    hdma_usart2_rx.Init.Channel = DMA_CHANNEL_4;
+    hdma_usart2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_usart2_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart2_rx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart2_rx.Init.Mode = DMA_NORMAL;
+    hdma_usart2_rx.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_usart2_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    if (HAL_DMA_Init(&hdma_usart2_rx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(uartHandle,hdmarx,hdma_usart2_rx);
+
+    /* USART2_TX Init */
+    hdma_usart2_tx.Instance = DMA1_Stream6;
+    hdma_usart2_tx.Init.Channel = DMA_CHANNEL_4;
+    hdma_usart2_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_usart2_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart2_tx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart2_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart2_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart2_tx.Init.Mode = DMA_NORMAL;
+    hdma_usart2_tx.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_usart2_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    if (HAL_DMA_Init(&hdma_usart2_tx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart2_tx);
+
+    /* USART2 interrupt Init */
+    HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(USART2_IRQn);
   /* USER CODE BEGIN USART2_MspInit 1 */
 
   /* USER CODE END USART2_MspInit 1 */
@@ -275,6 +318,12 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
     */
     HAL_GPIO_DeInit(GPIOD, BLE_CTRL_TX_Pin|BLE_CTRL_RX_Pin);
 
+    /* USART2 DMA DeInit */
+    HAL_DMA_DeInit(uartHandle->hdmarx);
+    HAL_DMA_DeInit(uartHandle->hdmatx);
+
+    /* USART2 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(USART2_IRQn);
   /* USER CODE BEGIN USART2_MspDeInit 1 */
 
   /* USER CODE END USART2_MspDeInit 1 */
@@ -320,14 +369,14 @@ int fgetc(FILE *f)
     HAL_UART_Receive(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
     return (ch);
 }
-/// kdrobot上位机数据处�????????? /////////////////////////////////////////////////////////
+/// kdrobot上位机数据处�?????????? /////////////////////////////////////////////////////////
 uint8_t g_kdr_rx_buffer[KDR_DATA_BUF_LEN];
 uint8_t TxBuffer[] = "I received!";
-// 中断模式的处�?? 
+// 中断模式的处�??? 
 // deprecated
 void uart_it_init(void)
 {
-  HAL_UART_Receive_IT(&USART_BLE_KDR, (uint8_t *)g_kdr_rx_buffer, KDR_DATA_BUF_LEN);// �????????????????用接�????????????????
+  HAL_UART_Receive_IT(&USART_BLE_KDR, (uint8_t *)g_kdr_rx_buffer, KDR_DATA_BUF_LEN);// �?????????????????用接�?????????????????
 }
 
  // 注意！！！！ 读满RxBuffer才会进入下面的处理函数！
@@ -335,15 +384,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart->Instance == USART_BLE_KDR.Instance)		//确认串口为USART1
     {
-        // HAL_UART_Transmit_IT(&huart1,(uint8_t *)TxBuffer,sizeof(TxBuffer));		//发�?�Wilco表明已收到数�???????????
+        // HAL_UART_Transmit_IT(&huart1,(uint8_t *)TxBuffer,sizeof(TxBuffer));		//发�?�Wilco表明已收到数�????????????
         // GPIO_PinState state;		//定义引脚状�??
-        // if (RxBuffer[0] == '1')		//如果接收到的数据第二位为�???????????1�???????????
+        // if (RxBuffer[0] == '1')		//如果接收到的数据第二位为�????????????1�????????????
         // {
-        //     state = GPIO_PIN_RESET;		//下拉引脚电平（即点亮LED�???????????
+        //     state = GPIO_PIN_RESET;		//下拉引脚电平（即点亮LED�????????????
         // }
         // if (RxBuffer[0] == '0')		
         // {
-        //     state = GPIO_PIN_SET;		//下拉引脚电平（即点亮LED�???????????
+        //     state = GPIO_PIN_SET;		//下拉引脚电平（即点亮LED�????????????
         // }
 		    // HAL_GPIO_WritePin(DOGGY_GPIO_Port, DOGGY_Pin, state);
         // HAL_GPIO_TogglePin(KITTEN_GPIO_Port, KITTEN_Pin);
@@ -357,13 +406,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         // HAL_UART_Receive_IT(&USART_BLE_KDR,(uint8_t *)g_kdr_rx_buffer,KDR_DATA_BUF_LEN);	//再次启用接收
     }
 }
-// DMA模式的中断处�??
-uint8_t g_kdr_rx_buffer_dma[KDR_DATA_BUF_LEN];
+// DMA模式的中断处�???
+uint8_t g_kdr_rx_buffer_dma[KDR_DATA_BUF_LEN]; // kdr上位机数�?
+uint8_t g_ctrl_rx_buffer_dma[CTRL_DATA_BUF_LEN]; // 蓝牙控制数据
 
 void uart_dma_it_init(void)
 {
   __HAL_UART_ENABLE_IT(&USART_BLE_KDR, UART_IT_IDLE);
   HAL_UART_Receive_DMA(&USART_BLE_KDR, g_kdr_rx_buffer_dma,KDR_DATA_BUF_LEN);
+
+  __HAL_UART_ENABLE_IT(&USART_BLE_CTRL, UART_IT_IDLE);
+  HAL_UART_Receive_DMA(&USART_BLE_CTRL, g_ctrl_rx_buffer_dma,CTRL_DATA_BUF_LEN);
 }
 void USART3_IRQHandler_dma(void)
 {
@@ -381,6 +434,24 @@ void USART3_IRQHandler_dma(void)
     // printf("xxxx%d\r\n",res); //note:!!!!串口中断中不能有其他串口的发送！
     memset(g_kdr_rx_buffer_dma, 0, KDR_DATA_BUF_LEN);
     HAL_UART_Receive_DMA(&USART_BLE_KDR, g_kdr_rx_buffer_dma,KDR_DATA_BUF_LEN);
+  }
+}
+
+void USART2_IRQHandler_dma(void)
+{
+  if (__HAL_UART_GET_FLAG(&USART_BLE_CTRL,UART_FLAG_IDLE) != RESET)
+  {
+    __HAL_UART_CLEAR_IDLEFLAG(&USART_BLE_CTRL);
+    HAL_UART_DMAStop(&USART_BLE_CTRL);
+
+    uint8_t rx_len = CTRL_DATA_BUF_LEN - __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
+    HAL_GPIO_TogglePin(KITTEN_GPIO_Port, KITTEN_Pin);
+
+    motion_control_ble(g_ctrl_rx_buffer_dma);
+
+    // printf("xxxx%d\r\n",res); //note:!!!!串口中断中不能有其他串口的发送！
+    memset(g_ctrl_rx_buffer_dma, 0, CTRL_DATA_BUF_LEN);
+    HAL_UART_Receive_DMA(&USART_BLE_CTRL, g_ctrl_rx_buffer_dma,CTRL_DATA_BUF_LEN);
   }
 }
 

@@ -46,6 +46,8 @@ extern TIM_HandleTypeDef htim7;
 
 extern TIM_HandleTypeDef htim8;
 
+extern TIM_HandleTypeDef htim10;
+
 /* USER CODE BEGIN Private defines */
 #define TIM_MOTOR_PWM htim1
 
@@ -54,6 +56,8 @@ extern TIM_HandleTypeDef htim8;
 #define TIM_ENCODER_B1 htim3
 #define TIM_ENCODER_B2 htim8
 #define TIM_ENCODER_CALC htim7 // 周期计算
+
+#define TIM_HC_SR04 htim10 // 超声波模块测�?
 /* USER CODE END Private defines */
 
 void MX_TIM1_Init(void);
@@ -63,6 +67,7 @@ void MX_TIM5_Init(void);
 void MX_TIM6_Init(void);
 void MX_TIM7_Init(void);
 void MX_TIM8_Init(void);
+void MX_TIM10_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 

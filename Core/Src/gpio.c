@@ -57,7 +57,7 @@ void MX_GPIO_Init(void)
                           |TMP_EA2_GND_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, MA12_STBY_Pin|TMP_EA1_VCC_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, BUZZER_Pin|MA12_STBY_Pin|TMP_EA1_VCC_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(TMP_EA1_GND_GPIO_Port, TMP_EA1_GND_Pin, GPIO_PIN_RESET);
@@ -70,7 +70,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, MA2_DY_Pin|DOGGY_Pin|MA2_DX_Pin|MB2_DY_Pin
-                          |MB2_DX_Pin|US_TRIG_Pin, GPIO_PIN_RESET);
+                          |MB2_DX_Pin|HC_SR04_TRIG_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PEPin PEPin PEPin PEPin
                            PEPin PEPin PEPin */
@@ -81,8 +81,8 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PCPin PCPin PCPin */
-  GPIO_InitStruct.Pin = MA12_STBY_Pin|TMP_EA1_VCC_Pin|TMP_EA1_GND_Pin;
+  /*Configure GPIO pins : PCPin PCPin PCPin PCPin */
+  GPIO_InitStruct.Pin = BUZZER_Pin|MA12_STBY_Pin|TMP_EA1_VCC_Pin|TMP_EA1_GND_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -98,17 +98,17 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pins : PDPin PDPin PDPin PDPin
                            PDPin PDPin */
   GPIO_InitStruct.Pin = MA2_DY_Pin|DOGGY_Pin|MA2_DX_Pin|MB2_DY_Pin
-                          |MB2_DX_Pin|US_TRIG_Pin;
+                          |MB2_DX_Pin|HC_SR04_TRIG_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PtPin */
-  GPIO_InitStruct.Pin = US_ECHO_Pin;
+  GPIO_InitStruct.Pin = HC_SR04_ECHO_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(US_ECHO_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(HC_SR04_ECHO_GPIO_Port, &GPIO_InitStruct);
 
 }
 

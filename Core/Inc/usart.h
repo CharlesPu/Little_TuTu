@@ -51,6 +51,7 @@ void MX_USART3_UART_Init(void);
 void uart_it_init(void);
 void uart_dma_it_init(void);
 void USART3_IRQHandler_dma(void);
+void USART2_IRQHandler_dma(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

@@ -105,3 +105,10 @@ void car_motion_control_test_motor()
     motor_set_speed_pwm(&motor_B1, _sMotorC_PWM);
     motor_set_speed_pwm(&motor_B2, _sMotorD_PWM);
 }
+
+// 蓝牙控制
+void motion_control_ble(uint8_t* b)
+{
+  // todo  
+}
+

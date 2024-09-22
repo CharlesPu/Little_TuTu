@@ -36,3 +36,6 @@ little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 little_tutu\tim.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 little_tutu\tim.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+little_tutu\tim.o: ../Core/Inc/hc_sr04.h
+little_tutu\tim.o: ../Core/Inc/motor.h
+little_tutu\tim.o: ../Core/Inc/pid.h

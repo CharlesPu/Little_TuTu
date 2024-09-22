@@ -74,6 +74,8 @@ void motor_init(void);
 void motor_test_pwm(void);
 void motor_test_encoder(void);
 void motor_encoder_init(void);
+void motor_encoder_parse(void);
+
 
 void motor_kdr_cmd(uint8_t* b);
 void motor_kdr_data(void);

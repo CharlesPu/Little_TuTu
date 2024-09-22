@@ -50,3 +50,5 @@ little_tutu\main.o: ../mpu6050/mpuiic.h
 little_tutu\main.o: ../Core/Inc/motor.h
 little_tutu\main.o: ../Core/Inc/pid.h
 little_tutu\main.o: ../Core/Inc/motion.h
+little_tutu\main.o: ../Core/Inc/hc_sr04.h
+little_tutu\main.o: ../Core/Inc/buzzer.h

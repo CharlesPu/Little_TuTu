@@ -48,3 +48,4 @@ little_tutu\usart.o: ../Core/Inc/kdr_com.h
 little_tutu\usart.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 little_tutu\usart.o: ../Core/Inc/motor.h
 little_tutu\usart.o: ../Core/Inc/pid.h
+little_tutu\usart.o: ../Core/Inc/motion.h

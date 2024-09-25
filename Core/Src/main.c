@@ -152,7 +152,7 @@ int main(void)
     // HAL_UART_Transmit(&huart1,(uint8_t *)"hello world!\r\n",14,HAL_MAX_DELAY);
     // printf("hello purui!\r\n");
     // OLED_U8G2_draw_test();
-    //////////////////////////////  0.1s   /////////////////////////////////
+    //////////////////////////////  10ms   /////////////////////////////////
 #ifdef MODULE_MPU6050
     imu_data_t imu_data;
     res= mpu_dmp_get_data(&imu_data);
@@ -181,11 +181,11 @@ int main(void)
       // motor_test_pwm();
       // motor_test_encoder();
 #ifdef MODULE_MPU6050   
-      // OLED_U8G2_draw_mpu6050(&imu_data);
+      OLED_U8G2_draw_mpu6050(&imu_data);
 #endif
     }
     //////////////////////////////  50ms   ///////////////////////////////// 
-    if (loop_cnt % 5 == 3) {
+    if (loop_cnt % 10 == 3) {
       // car_motion_control_test_motor();
 
 #ifdef MODULE_KDR_REPORTER

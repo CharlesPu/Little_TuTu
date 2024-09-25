@@ -53,7 +53,7 @@ void motor_init(void)
   motor_A1.tim_pwm = &TIM_MOTOR_PWM;
   motor_A1.tim_pwm_channel=TIM_CHANNEL_1;
   motor_A1.tim_encoder = &TIM_ENCODER_A1;
-  motor_A1.pid_para.P = 
+  motor_A1.encoder_data.overflow_cnt = 0;
 
   motor_A2.m_name = MOTOR_A2;
   motor_A2.e_name = ENCODER_A2;
@@ -64,6 +64,7 @@ void motor_init(void)
   motor_A2.tim_pwm = &TIM_MOTOR_PWM;
   motor_A2.tim_pwm_channel=TIM_CHANNEL_2;
   motor_A2.tim_encoder = &TIM_ENCODER_A2;
+  motor_A2.encoder_data.overflow_cnt = 0;
 
   motor_B1.m_name = MOTOR_B1;
   motor_B1.e_name = ENCODER_B1;
@@ -74,6 +75,7 @@ void motor_init(void)
   motor_B1.tim_pwm = &TIM_MOTOR_PWM;
   motor_B1.tim_pwm_channel=TIM_CHANNEL_3;
   motor_B1.tim_encoder = &TIM_ENCODER_B1;
+  motor_B1.encoder_data.overflow_cnt = 0;
 
   motor_B2.m_name = MOTOR_B2;
   motor_B2.e_name = ENCODER_B2;
@@ -84,6 +86,7 @@ void motor_init(void)
   motor_B2.tim_pwm = &TIM_MOTOR_PWM;
   motor_B2.tim_pwm_channel=TIM_CHANNEL_4;
   motor_B2.tim_encoder = &TIM_ENCODER_B2;
+  motor_B2.encoder_data.overflow_cnt = 0;
 
   HAL_TIM_PWM_Start(motor_A1.tim_pwm,motor_A1.tim_pwm_channel);// note!!!!!
   HAL_TIM_PWM_Start(motor_A2.tim_pwm,motor_A2.tim_pwm_channel);// note!!!!!
@@ -145,6 +148,11 @@ void motor_encoder_init(void)
   HAL_TIM_Encoder_Start(motor_B1.tim_encoder, TIM_CHANNEL_1|TIM_CHANNEL_2);
   HAL_TIM_Encoder_Start(motor_B2.tim_encoder, TIM_CHANNEL_1|TIM_CHANNEL_2);
 
+  HAL_TIM_Base_Start_IT(motor_A1.tim_encoder);
+  HAL_TIM_Base_Start_IT(motor_A2.tim_encoder);
+  HAL_TIM_Base_Start_IT(motor_B1.tim_encoder);
+  HAL_TIM_Base_Start_IT(motor_B2.tim_encoder);
+
   HAL_TIM_Base_Start_IT(&TIM_ENCODER_CALC);//note!!!
 }
 
@@ -160,6 +168,22 @@ void motor_test_encoder(void)
     (float)(motor_B1.encoder_data.dir),(float)(motor_B1.encoder_data.raw_value),
     (float)(motor_B2.encoder_data.dir),(float)(motor_B2.encoder_data.raw_value));
 }
+
+void motor_encoder_overflow_IRQHandler(TIM_HandleTypeDef *htim)
+{
+  printf("wjjj\r\n");
+  if (htim->Instance == motor_A1.tim_encoder->Instance){
+    if(__HAL_TIM_GET_COUNTER(motor_A1.tim_encoder) < 32768 ) motor_A1.encoder_data.overflow_cnt++; else motor_A1.encoder_data.overflow_cnt--;
+  }else if (htim->Instance == motor_A2.tim_encoder->Instance) { 
+		if(__HAL_TIM_GET_COUNTER(motor_A2.tim_encoder) < 32768 ) motor_A2.encoder_data.overflow_cnt++; else motor_A2.encoder_data.overflow_cnt--;
+  }else if (htim->Instance == motor_B1.tim_encoder->Instance) { 
+    if(__HAL_TIM_GET_COUNTER(motor_B1.tim_encoder) < 32768 ) motor_B1.encoder_data.overflow_cnt++; else motor_B1.encoder_data.overflow_cnt--;
+  }else if (htim->Instance == motor_B2.tim_encoder->Instance) { 
+		if(__HAL_TIM_GET_COUNTER(motor_B2.tim_encoder) < 32768 ) motor_B2.encoder_data.overflow_cnt++; else motor_B2.encoder_data.overflow_cnt--;
+  }
+
+}
+
 // 溢出中断，定期获取编码，计算车轮速度
 void motor_encoder_parse(void)
 {
@@ -178,19 +202,23 @@ void motor_encoder_parse(void)
     motor_A2.speed_current = (int16_t)(motor_A2.encoder_data.calc_value);
     __HAL_TIM_SetCounter(motor_A2.tim_encoder, 0);
 
+    // 由于b1、b2使用的timer预装载值是16位的，反向计数从65535向下
+    // 但是转速不能超过55圈/s，否则这里会溢出
     motor_B1.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_B1.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;
-    motor_B1.encoder_data.raw_value =__HAL_TIM_GET_COUNTER(motor_B1.tim_encoder);
+    motor_B1.encoder_data.raw_value = __HAL_TIM_GET_COUNTER(motor_B1.tim_encoder) + motor_B1.encoder_data.overflow_cnt * 65536;
     // mm/s
     motor_B1.encoder_data.calc_value = ((float)motor_B1.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
     motor_B1.speed_current = (int16_t)(motor_B1.encoder_data.calc_value);
-    __HAL_TIM_SetCounter(motor_B1.tim_encoder, 0);
+    __HAL_TIM_SetCounter(motor_B1.tim_encoder, 0); 
+    motor_B1.encoder_data.overflow_cnt =0;
 
     motor_B2.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_B2.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;
-    motor_B2.encoder_data.raw_value =__HAL_TIM_GET_COUNTER(motor_B2.tim_encoder);
+    motor_B2.encoder_data.raw_value =  __HAL_TIM_GET_COUNTER(motor_B2.tim_encoder) + motor_B2.encoder_data.overflow_cnt * 65536;;
     // mm/s
     motor_B2.encoder_data.calc_value = ((float)motor_B2.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
     motor_B2.speed_current = (int16_t)(motor_B2.encoder_data.calc_value);
     __HAL_TIM_SetCounter(motor_B2.tim_encoder, 0);
+    motor_B2.encoder_data.overflow_cnt=0;
 }
 
 
@@ -254,8 +282,8 @@ void motor_kdr_data(void)
   // HAL_UART_Transmit(&huart3,KDCOM_SetData(&kd_b2, 3, 27.0f, 0),sizeof(KDRobot), 100);
 
   // INF_LOG("MA1 dir: %d, raw: %d, cal: %.2f\r\n",motor_A1.encoder_data.dir, motor_A1.encoder_data.raw_value,motor_A1.encoder_data.calc_value);
-  INF_LOG("MA2 dir: %d, raw: %d, cal: %.2f\r\n",motor_A2.encoder_data.dir, motor_A2.encoder_data.raw_value,motor_A2.encoder_data.calc_value);
-  // INF_LOG("MB1 dir: %d, raw: %d, cal: %.2f\r\n",motor_B1.encoder_data.dir, motor_B1.encoder_data.raw_value,motor_B1.encoder_data.calc_value);
+  // INF_LOG("MA2 dir: %d, raw: %d, cal: %.2f\r\n",motor_A2.encoder_data.dir, motor_A2.encoder_data.raw_value,motor_A2.encoder_data.calc_value);
+  INF_LOG("MB1 dir: %d, raw: %d, cal: %.2f\r\n",motor_B1.encoder_data.dir, motor_B1.encoder_data.raw_value,motor_B1.encoder_data.calc_value);
   // INF_LOG("MB2 dir: %d, raw: %d, cal: %.2f\r\n",motor_B2.encoder_data.dir, motor_B2.encoder_data.raw_value,motor_B2.encoder_data.calc_value);
 
   KDRobot kd_a1;

@@ -38,6 +38,7 @@ typedef enum
 typedef struct {
   MOTOR_DIRECTION dir; // todo 暂时没用到
   int32_t raw_value;
+  int16_t overflow_cnt;
   float calc_value;
 }encoder_data_t;
 
@@ -74,6 +75,7 @@ void motor_init(void);
 void motor_test_pwm(void);
 void motor_test_encoder(void);
 void motor_encoder_init(void);
+void motor_encoder_overflow_IRQHandler(TIM_HandleTypeDef *htim);
 void motor_encoder_parse(void);
 
 

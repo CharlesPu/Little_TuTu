@@ -7,7 +7,7 @@ extern "C" {
 
 #include "main.h"
 
-#define BEEP_INTERVAL 10 // ms
+#define BEEP_INTERVAL 150 // ms
 
 void BUZZER_init(void);
 void BUZZER_beep_once(void);

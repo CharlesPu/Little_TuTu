@@ -70,10 +70,6 @@ void Error_Handler(void);
 #define BUZZER_GPIO_Port GPIOC
 #define MA12_STBY_Pin GPIO_PIN_0
 #define MA12_STBY_GPIO_Port GPIOC
-#define TMP_EA1_VCC_Pin GPIO_PIN_2
-#define TMP_EA1_VCC_GPIO_Port GPIOC
-#define TMP_EA1_GND_Pin GPIO_PIN_3
-#define TMP_EA1_GND_GPIO_Port GPIOC
 #define EA1_A_Pin GPIO_PIN_0
 #define EA1_A_GPIO_Port GPIOA
 #define EA1_B_Pin GPIO_PIN_1
@@ -130,10 +126,6 @@ void Error_Handler(void);
 #define OLED_SCL_GPIO_Port GPIOB
 #define OLED_SDA_Pin GPIO_PIN_7
 #define OLED_SDA_GPIO_Port GPIOB
-#define TMP_EA2_GND_Pin GPIO_PIN_0
-#define TMP_EA2_GND_GPIO_Port GPIOE
-#define TMP_EA2_VCC_Pin GPIO_PIN_1
-#define TMP_EA2_VCC_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 #define DBG 0
@@ -155,7 +147,7 @@ void Error_Handler(void);
 
 // #define MODULE_MPU6050
 // #define MODULE_HC_SR04
-// #define MODULE_KDR_REPORTER
+#define MODULE_KDR_REPORTER
 
 /* USER CODE END Private defines */
 

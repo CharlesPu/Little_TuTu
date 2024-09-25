@@ -15,6 +15,7 @@
     "usart.h": "c",
     "stm32f4xx.h": "c",
     "stm32f407xx.h": "c",
-    "hc_sr04.h": "c"
+    "hc_sr04.h": "c",
+    "stm32_u8g2.h": "c"
   }
 }

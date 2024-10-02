@@ -3,7 +3,7 @@
 <title>Static Call Graph - [little_tutu\little_tutu.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image little_tutu\little_tutu.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Oct 02 18:28:14 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Oct 02 21:03:17 2024
 <BR><P>
 <H3>Maximum Stack Usage =        440 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1405,9 +1405,9 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_U8G2_init
 </UL>
 
-<P><STRONG><a name="[117]"></a>PID_Param_SetZero</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, pid.o(i.PID_Param_SetZero))
+<P><STRONG><a name="[11b]"></a>PID_Param_SetZero</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, pid.o(i.PID_Param_SetZero))
 <BR><BR>[Called By]<UL><LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_motor_pid
-<LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control
+<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_kinematics
 </UL>
 
 <P><STRONG><a name="[11d]"></a>PID_wheelspeed_calc</STRONG> (Thumb, 150 bytes, Stack size 0 bytes, pid.o(i.PID_wheelspeed_calc), UNUSED)
@@ -1676,30 +1676,22 @@ Global Symbols
 <LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_U8G2_draw_buf
 </UL>
 
-<P><STRONG><a name="[116]"></a>motion_control</STRONG> (Thumb, 118 bytes, Stack size 24 bytes, motion.o(i.motion_control))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = motion_control
-</UL>
-<BR>[Calls]<UL><LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Param_SetZero
-</UL>
-<BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_input_ble
-</UL>
-
-<P><STRONG><a name="[119]"></a>motion_control_direction_x</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, motion.o(i.motion_control_direction_x))
+<P><STRONG><a name="[117]"></a>motion_control_direction_x</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, motion.o(i.motion_control_direction_x))
 <BR><BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_input_ble
 </UL>
 
-<P><STRONG><a name="[11a]"></a>motion_control_direction_y</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, motion.o(i.motion_control_direction_y))
+<P><STRONG><a name="[118]"></a>motion_control_direction_y</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, motion.o(i.motion_control_direction_y))
 <BR><BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_input_ble
 </UL>
 
-<P><STRONG><a name="[11b]"></a>motion_control_direction_z</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, motion.o(i.motion_control_direction_z))
+<P><STRONG><a name="[119]"></a>motion_control_direction_z</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, motion.o(i.motion_control_direction_z))
 <BR><BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_input_ble
 </UL>
 
 <P><STRONG><a name="[114]"></a>motion_control_guardian</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, motion.o(i.motion_control_guardian))
 <BR><BR>[Stack]<UL><LI>Max Depth = 252<LI>Call Chain = motion_control_guardian &rArr; OLED_U8G2_draw_hc_sr04 &rArr; u8g2_DrawStr &rArr; u8g2_draw_string &rArr; u8g2_DrawGlyph &rArr; u8g2_font_decode_glyph &rArr; u8g2_font_decode_len &rArr; u8g2_DrawHVLine &rArr; u8g2_clip_intersection2
 </UL>
-<BR>[Calls]<UL><LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_stop
+<BR>[Calls]<UL><LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_stop
 <LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_U8G2_draw_hc_sr04
 <LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HC_SR04_sonar_mm
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BUZZER_beep_long_on
@@ -1709,15 +1701,23 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[104]"></a>motion_control_input_ble</STRONG> (Thumb, 162 bytes, Stack size 0 bytes, motion.o(i.motion_control_input_ble))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = motion_control_input_ble &rArr; motion_control
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = motion_control_input_ble &rArr; motion_control_kinematics
 </UL>
-<BR>[Calls]<UL><LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_stop
-<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_direction_z
-<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_direction_y
-<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_direction_x
-<LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control
+<BR>[Calls]<UL><LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_stop
+<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_kinematics
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_direction_z
+<LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_direction_y
+<LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_direction_x
 </UL>
 <BR>[Called By]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART2_IRQHandler_dma
+</UL>
+
+<P><STRONG><a name="[11a]"></a>motion_control_kinematics</STRONG> (Thumb, 118 bytes, Stack size 24 bytes, motion.o(i.motion_control_kinematics))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = motion_control_kinematics
+</UL>
+<BR>[Calls]<UL><LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Param_SetZero
+</UL>
+<BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_input_ble
 </UL>
 
 <P><STRONG><a name="[be]"></a>motion_control_motor_ctrl_output</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, motion.o(i.motion_control_motor_ctrl_output))
@@ -1726,11 +1726,11 @@ Global Symbols
 
 <P><STRONG><a name="[11c]"></a>motion_control_motor_pid</STRONG> (Thumb, 200 bytes, Stack size 40 bytes, motion.o(i.motion_control_motor_pid), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_wheelspeed_calc
-<LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Param_SetZero
+<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Param_SetZero
 <LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_set_speed_pwm
 </UL>
 
-<P><STRONG><a name="[118]"></a>motion_control_stop</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, motion.o(i.motion_control_stop))
+<P><STRONG><a name="[116]"></a>motion_control_stop</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, motion.o(i.motion_control_stop))
 <BR><BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_input_ble
 <LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motion_control_guardian
 </UL>

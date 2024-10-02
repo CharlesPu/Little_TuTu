@@ -7,7 +7,7 @@ void MPU_SDA_IN()
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   GPIO_InitStruct.Pin = MPU_I2C_SDA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP; // note!!!!!
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 } 
@@ -16,15 +16,15 @@ void MPU_SDA_OUT()
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   GPIO_InitStruct.Pin = MPU_I2C_SDA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 } 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_Delay
-º¯Êý¹¦ÄÜ£ºMPU IICÑÓÊ±º¯Êý£¬ÑÓÊ±2ms
-º¯Êý²ÎÊý£ºÎÞ
-º¯Êý·µ»ØÖµ£ºÎÞ
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_Delay
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±2ms
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
 **********************************************/
 void MPU_IIC_Delay(void)
 {
@@ -32,70 +32,70 @@ void MPU_IIC_Delay(void)
 }
 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_Init
-º¯Êý¹¦ÄÜ£ºMPU IIC³õÊ¼»¯
-º¯Êý²ÎÊý£ºÎÞ
-º¯Êý·µ»ØÖµ£ºÎÞ
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_Init
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½ï¿½Ê¼ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
 **********************************************/
 void MPU_IIC_Init(void)
 {					     
   // GPIO_InitTypeDef  GPIO_InitStructure;
 	
-	// RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);			//ÏÈÊ¹ÄÜÍâÉèIO PORTBÊ±ÖÓ 
+	// RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);			//ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IO PORTBÊ±ï¿½ï¿½ 
 		
-  // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10|GPIO_Pin_11;	  //¶Ë¿ÚÅäÖÃ
-  // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 				  //ÍÆÍìÊä³ö
-  // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;				  //IO¿ÚËÙ¶ÈÎª50MHz
-  // GPIO_Init(GPIOB, &GPIO_InitStructure);					 					//¸ù¾ÝÉè¶¨²ÎÊý³õÊ¼»¯GPIO 
+  // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10|GPIO_Pin_11;	  //ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½
+  // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 				  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;				  //IOï¿½ï¿½ï¿½Ù¶ï¿½Îª50MHz
+  // GPIO_Init(GPIOB, &GPIO_InitStructure);					 					//ï¿½ï¿½ï¿½ï¿½ï¿½è¶¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½GPIO 
 	
-  // GPIO_SetBits(GPIOB,GPIO_Pin_10|GPIO_Pin_11);						  //PB10,PB11 Êä³ö¸ß	
+  // GPIO_SetBits(GPIOB,GPIO_Pin_10|GPIO_Pin_11);						  //PB10,PB11 ï¿½ï¿½ï¿½ï¿½ï¿½	
  
 }
 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_Start
-º¯Êý¹¦ÄÜ£ºMPU IIC·¢ËÍÆðÊ¼ÐÅºÅ
-º¯Êý²ÎÊý£ºÎÞ
-º¯Êý·µ»ØÖµ£ºÎÞ
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_Start
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½Åºï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
 **********************************************/
 void MPU_IIC_Start(void)
 {
-	MPU_SDA_OUT();     //SDAÏß Êä³ö
+	MPU_SDA_OUT();     //SDAï¿½ï¿½ ï¿½ï¿½ï¿½
 	MPU_IIC_SDA_H();	  	  
 	MPU_IIC_SCL_H();
 	MPU_IIC_Delay();
- 	MPU_IIC_SDA_L();     //START:µ±SCLÏß´¦ÓÚ¸ßµçÆ½Ê±,SDAÏßÍ»È»´Ó¸ß±äµÍ,·¢ËÍÆðÊ¼ÐÅºÅ
+ 	MPU_IIC_SDA_L();     //START:ï¿½ï¿½SCLï¿½ß´ï¿½ï¿½Ú¸ßµï¿½Æ½Ê±,SDAï¿½ï¿½Í»È»ï¿½Ó¸ß±ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½Åºï¿½
 	MPU_IIC_Delay();
-	MPU_IIC_SCL_L();		 //Ç¯×¡I2C×ÜÏß£¬×¼±¸·¢ËÍ»ò½ÓÊÕÊý¾Ý 
+	MPU_IIC_SCL_L();		 //Ç¯×¡I2Cï¿½ï¿½ï¿½ß£ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 }
 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_Stop
-º¯Êý¹¦ÄÜ£ºMPU IIC·¢ËÍÍ£Ö¹ÐÅºÅ
-º¯Êý²ÎÊý£ºÎÞ
-º¯Êý·µ»ØÖµ£ºÎÞ
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_Stop
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½Åºï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
 **********************************************/
 void MPU_IIC_Stop(void)
 {
-	MPU_SDA_OUT();		 //SDAÏßÊä³ö
+	MPU_SDA_OUT();		 //SDAï¿½ï¿½ï¿½ï¿½ï¿½
 	MPU_IIC_SCL_L();
-	MPU_IIC_SDA_L();		 //STOP:µ±SCLÏß´¦ÓÚ¸ßµçÆ½Ê±,SDAÏßÍ»È»´ÓµÍ±ä¸ß,·¢ËÍÍ£Ö¹ÐÅºÅ
+	MPU_IIC_SDA_L();		 //STOP:ï¿½ï¿½SCLï¿½ß´ï¿½ï¿½Ú¸ßµï¿½Æ½Ê±,SDAï¿½ï¿½Í»È»ï¿½ÓµÍ±ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½Åºï¿½
  	MPU_IIC_Delay();
 	MPU_IIC_SCL_H(); 
-	MPU_IIC_SDA_H();		 //·¢ËÍI2C×ÜÏß½áÊøÐÅºÅ
+	MPU_IIC_SDA_H();		 //ï¿½ï¿½ï¿½ï¿½I2Cï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½ï¿½Åºï¿½
 	MPU_IIC_Delay();							   	
 }
 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_Wait_Ack
-º¯Êý¹¦ÄÜ£ºMPU IICµÈ´ýÐÅºÅµ½À´
-º¯Êý²ÎÊý£ºÎÞ
-º¯Êý·µ»ØÖµ£º1:½ÓÊÕÓ¦´ðÐÅºÅ³É¹¦  0:½ÓÊÕÓ¦´ðÐÅºÅÊ§°Ü
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_Wait_Ack
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½È´ï¿½ï¿½ÅºÅµï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½1:ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ÅºÅ³É¹ï¿½  0:ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Åºï¿½Ê§ï¿½ï¿½
 **********************************************/
 uint8_t MPU_IIC_Wait_Ack(void)
 {
 	uint8_t ucErrTime=0;
-	MPU_SDA_IN();  //SDAÉèÖÃÎªÊäÈë  
+	MPU_SDA_IN();  //SDAï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½  
 	MPU_IIC_SDA_H();MPU_IIC_Delay();
 	MPU_IIC_SCL_H();MPU_IIC_Delay();
 	while(MPU_READ_SDA())
@@ -107,15 +107,15 @@ uint8_t MPU_IIC_Wait_Ack(void)
 			return 1;
 		}
 	}
-	MPU_IIC_SCL_L();//Ê±ÖÓÊä³ö0
+	MPU_IIC_SCL_L();//Ê±ï¿½ï¿½ï¿½ï¿½ï¿½0
 	return 0;
 } 
 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_Ack
-º¯Êý¹¦ÄÜ£ºMPU IIC²úÉúÓ¦´ðÐÅºÅ
-º¯Êý²ÎÊý£ºÎÞ
-º¯Êý·µ»ØÖµ£ºÎÞ
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_Ack
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Åºï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
 **********************************************/
 void MPU_IIC_Ack(void)
 {
@@ -129,10 +129,10 @@ void MPU_IIC_Ack(void)
 }
 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_NAck
-º¯Êý¹¦ÄÜ£ºMPU IIC²»²úÉúÓ¦´ðÐÅºÅ
-º¯Êý²ÎÊý£ºÎÞ
-º¯Êý·µ»ØÖµ£ºÎÞ
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_NAck
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Åºï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
 **********************************************/   
 void MPU_IIC_NAck(void)
 {
@@ -146,17 +146,17 @@ void MPU_IIC_NAck(void)
 }
 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_Send_Byte
-º¯Êý¹¦ÄÜ£ºMPU IIC·¢ËÍÒ»¸ö×Ö½Ú
-º¯Êý²ÎÊý£ºtxd£ºÒª·¢ËÍµÄÊý¾Ý
-º¯Êý·µ»ØÖµ£ºÎÞ
-×¢Òâ£ºIIC·¢ËÍ×Ö½ÚÊÇÒ»¸öÒ»¸öÎ»·¢ËÍµÄ£¬·¢ËÍÒ»¸ö×Ö½ÚÐèÒª·¢ËÍ°Ë´Î
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_Send_Byte
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½txdï¿½ï¿½Òªï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
+×¢ï¿½â£ºIICï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½ï¿½ÍµÄ£ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Í°Ë´ï¿½
 **********************************************/
 void MPU_IIC_Send_Byte(uint8_t txd)
 {                        
     uint8_t t;   
 		MPU_SDA_OUT(); 	    
-    MPU_IIC_SCL_L();		//À­µÍÊ±ÖÓ¿ªÊ¼Êý¾Ý´«Êä
+    MPU_IIC_SCL_L();		//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ó¿ï¿½Ê¼ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
     for(t=0;t<8;t++)
     {          
       if ((txd&0x80)>>7) MPU_IIC_SDA_H();else MPU_IIC_SDA_L();
@@ -169,28 +169,28 @@ void MPU_IIC_Send_Byte(uint8_t txd)
 } 	    
 
 /**********************************************
-º¯ÊýÃû³Æ£ºMPU_IIC_Read_Byte
-º¯Êý¹¦ÄÜ£ºMPU IIC¶ÁÈ¡Ò»¸ö×Ö½Ú
-º¯Êý²ÎÊý£ºack: 1,·¢ËÍACK   0,·¢ËÍNACK 
-º¯Êý·µ»ØÖµ£º½ÓÊÕµ½µÄÊý¾Ý
-×¢Òâ£ºIIC¶ÁÈ¡×Ö½ÚÊÇÒ»¸öÒ»¸öÎ»¶ÁÈ¡µÄ£¬¶ÁÈ¡Ò»¸ö×Ö½ÚÐèÒª¶ÁÈ¡°Ë´Î
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½MPU_IIC_Read_Byte
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½MPU IICï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ack: 1,ï¿½ï¿½ï¿½ï¿½ACK   0,ï¿½ï¿½ï¿½ï¿½NACK 
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+×¢ï¿½â£ºIICï¿½ï¿½È¡ï¿½Ö½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½È¡ï¿½Ä£ï¿½ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½Òªï¿½ï¿½È¡ï¿½Ë´ï¿½
 **********************************************/ 
 uint8_t MPU_IIC_Read_Byte(unsigned char ack)
 {
 	unsigned char i,receive=0;
-  MPU_SDA_IN();              //SDAÉèÖÃÎªÊäÈë
+  MPU_SDA_IN();              //SDAï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
     for(i=0;i<8;i++)
 	  {
         MPU_IIC_SCL_L();
         MPU_IIC_Delay();
 				MPU_IIC_SCL_H();
         receive<<=1;
-        if(MPU_READ_SDA())receive++;   //Èç¹û¶Áµ½ÁËÊý¾Ý
+        if(MPU_READ_SDA())receive++;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				MPU_IIC_Delay(); 
     }					 
     if (!ack)
-        MPU_IIC_NAck();   //·¢ËÍnACK
+        MPU_IIC_NAck();   //ï¿½ï¿½ï¿½ï¿½nACK
     else
-        MPU_IIC_Ack();    //·¢ËÍACK   
+        MPU_IIC_Ack();    //ï¿½ï¿½ï¿½ï¿½ACK   
     return receive;
 }

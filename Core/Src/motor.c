@@ -50,10 +50,13 @@ void motor_init(void)
   motor_A1.dir_port_y = MA1_DY_GPIO_Port;
   motor_A1.dir_pin_x = MA1_DX_Pin;
   motor_A1.dir_pin_y = MA1_DY_Pin;
+  motor_A1.dir_forward_mode = 1;
   motor_A1.tim_pwm = &TIM_MOTOR_PWM;
   motor_A1.tim_pwm_channel=TIM_CHANNEL_1;
   motor_A1.tim_encoder = &TIM_ENCODER_A1;
   motor_A1.encoder_data.overflow_cnt = 0;
+  motor_A1.speed_target = 0;
+  motor_A1.speed_current = 0;
 
   motor_A2.m_name = MOTOR_A2;
   motor_A2.e_name = ENCODER_A2;
@@ -61,10 +64,13 @@ void motor_init(void)
   motor_A2.dir_port_y = MA2_DY_GPIO_Port;
   motor_A2.dir_pin_x = MA2_DX_Pin;
   motor_A2.dir_pin_y = MA2_DY_Pin;
+  motor_A2.dir_forward_mode = 0;
   motor_A2.tim_pwm = &TIM_MOTOR_PWM;
   motor_A2.tim_pwm_channel=TIM_CHANNEL_2;
   motor_A2.tim_encoder = &TIM_ENCODER_A2;
   motor_A2.encoder_data.overflow_cnt = 0;
+  motor_A2.speed_target = 0;
+  motor_A2.speed_current = 0;
 
   motor_B1.m_name = MOTOR_B1;
   motor_B1.e_name = ENCODER_B1;
@@ -72,10 +78,13 @@ void motor_init(void)
   motor_B1.dir_port_y = MB1_DY_GPIO_Port;
   motor_B1.dir_pin_x = MB1_DX_Pin;
   motor_B1.dir_pin_y = MB1_DY_Pin;
+  motor_B1.dir_forward_mode = 1;
   motor_B1.tim_pwm = &TIM_MOTOR_PWM;
   motor_B1.tim_pwm_channel=TIM_CHANNEL_3;
   motor_B1.tim_encoder = &TIM_ENCODER_B1;
   motor_B1.encoder_data.overflow_cnt = 0;
+  motor_B1.speed_target = 0;
+  motor_B1.speed_current = 0; 
 
   motor_B2.m_name = MOTOR_B2;
   motor_B2.e_name = ENCODER_B2;
@@ -87,34 +96,41 @@ void motor_init(void)
   motor_B2.tim_pwm_channel=TIM_CHANNEL_4;
   motor_B2.tim_encoder = &TIM_ENCODER_B2;
   motor_B2.encoder_data.overflow_cnt = 0;
+  motor_B2.speed_target = 0;
+  motor_B2.speed_current = 0;
 
   HAL_TIM_PWM_Start(motor_A1.tim_pwm,motor_A1.tim_pwm_channel);// note!!!!!
   HAL_TIM_PWM_Start(motor_A2.tim_pwm,motor_A2.tim_pwm_channel);// note!!!!!
   HAL_TIM_PWM_Start(motor_B1.tim_pwm,motor_B1.tim_pwm_channel);// note!!!!!
   HAL_TIM_PWM_Start(motor_B2.tim_pwm,motor_B2.tim_pwm_channel);// note!!!!!
 
+  motor_set_speed_pwm(&motor_A1, MOTOR_DIR_STOP);
+  motor_set_speed_pwm(&motor_A2, MOTOR_DIR_STOP);
+  motor_set_speed_pwm(&motor_B1, MOTOR_DIR_STOP);
+  motor_set_speed_pwm(&motor_B2, MOTOR_DIR_STOP);
+
   // pid init
   // 厂家值: P = 0.35; I = 0.65; D = 0.2;
-  motor_A1.pid_para.P = 0.3;
-  motor_A1.pid_para.I = 0.25;
+  motor_A1.pid_para.P = 0.35;
+  motor_A1.pid_para.I = 0.65;
   motor_A1.pid_para.D = 0.2;
   motor_A1.pid_para.PrevError = 0;
   motor_A1.pid_para.SumError = 0;
 
-  motor_A2.pid_para.P = 0.3;
-  motor_A2.pid_para.I = 0.2;
+  motor_A2.pid_para.P = 0.35;
+  motor_A2.pid_para.I = 0.65;
   motor_A2.pid_para.D = 0.2;
   motor_A2.pid_para.PrevError = 0;
   motor_A2.pid_para.SumError = 0;
 
-  motor_B1.pid_para.P = 0.3;;
-  motor_B1.pid_para.I = 0.2;;
+  motor_B1.pid_para.P = 0.35;
+  motor_B1.pid_para.I = 0.65;
   motor_B1.pid_para.D = 0.2;
   motor_B1.pid_para.PrevError = 0;
   motor_B1.pid_para.SumError = 0;
 
-  motor_B2.pid_para.P = 0.3;
-  motor_B2.pid_para.I = 0.2;
+  motor_B2.pid_para.P = 0.35;
+  motor_B2.pid_para.I = 0.65;
   motor_B2.pid_para.D = 0.2;
   motor_B2.pid_para.PrevError = 0;
   motor_B2.pid_para.SumError = 0;
@@ -122,22 +138,28 @@ void motor_init(void)
 
 void motor_test_pwm(void)
 {
-  motor_set_direction(&motor_A1, MOTOR_DIR_FORWARD);
-  motor_set_pwm(&motor_A1, 2000);
-  motor_set_direction(&motor_A2, MOTOR_DIR_FORWARD);
-  motor_set_pwm(&motor_A2, 2000);
+  motor_set_speed_pwm(&motor_A1, 1000);
+  motor_set_speed_pwm(&motor_A2, 1000);
+  motor_set_speed_pwm(&motor_B1, 1000);
+  motor_set_speed_pwm(&motor_B2, 1000);
   HAL_Delay(3000);
-  motor_set_pwm(&motor_A1, 0);
-  motor_set_pwm(&motor_A2, 0);
+
+  motor_set_speed_pwm(&motor_A1, 0);
+  motor_set_speed_pwm(&motor_A2, 0);
+  motor_set_speed_pwm(&motor_B1, 0);
+  motor_set_speed_pwm(&motor_B2, 0);
   HAL_Delay(1000);
 
-  motor_set_direction(&motor_A1, MOTOR_DIR_BACKWARD);
-  motor_set_pwm(&motor_A1, 2000);
-  motor_set_direction(&motor_A2, MOTOR_DIR_FORWARD);
-  motor_set_pwm(&motor_A2, 2000);
+  motor_set_speed_pwm(&motor_A1, -1000);
+  motor_set_speed_pwm(&motor_A2, -1000);
+  motor_set_speed_pwm(&motor_B1, -1000);
+  motor_set_speed_pwm(&motor_B2, -1000);
   HAL_Delay(3000);
-  motor_set_pwm(&motor_A1, 0);
-  motor_set_pwm(&motor_A2, 0);
+
+  motor_set_speed_pwm(&motor_A1, 0);
+  motor_set_speed_pwm(&motor_A2, 0);
+  motor_set_speed_pwm(&motor_B1, 0);
+  motor_set_speed_pwm(&motor_B2, 0);
   HAL_Delay(1000);
 }
 
@@ -148,14 +170,20 @@ void motor_encoder_init(void)
   HAL_TIM_Encoder_Start(motor_B1.tim_encoder, TIM_CHANNEL_1|TIM_CHANNEL_2);
   HAL_TIM_Encoder_Start(motor_B2.tim_encoder, TIM_CHANNEL_1|TIM_CHANNEL_2);
 
+
+  __HAL_TIM_CLEAR_FLAG(motor_A1.tim_encoder, TIM_FLAG_UPDATE); // note!!!防止初始化就进入中断！
+  __HAL_TIM_CLEAR_FLAG(motor_A2.tim_encoder, TIM_FLAG_UPDATE);
+  __HAL_TIM_CLEAR_FLAG(motor_B1.tim_encoder, TIM_FLAG_UPDATE);
+  __HAL_TIM_CLEAR_FLAG(motor_B2.tim_encoder, TIM_FLAG_UPDATE);
   HAL_TIM_Base_Start_IT(motor_A1.tim_encoder);
   HAL_TIM_Base_Start_IT(motor_A2.tim_encoder);
   HAL_TIM_Base_Start_IT(motor_B1.tim_encoder);
   HAL_TIM_Base_Start_IT(motor_B2.tim_encoder);
 
+  __HAL_TIM_CLEAR_FLAG(&TIM_ENCODER_CALC, TIM_FLAG_UPDATE);
   HAL_TIM_Base_Start_IT(&TIM_ENCODER_CALC);//note!!!
 }
-
+// 字符串模式纯发送
 void motor_test_encoder(void)
 {
   // INF_LOG("MA1 dir: %d, raw: %d, cal: %.2f\r\n",motor_A1.encoder_data.dir, motor_A1.encoder_data.raw_value,motor_A1.encoder_data.calc_value);
@@ -171,7 +199,6 @@ void motor_test_encoder(void)
 
 void motor_encoder_overflow_IRQHandler(TIM_HandleTypeDef *htim)
 {
-  printf("wjjj\r\n");
   if (htim->Instance == motor_A1.tim_encoder->Instance){
     if(__HAL_TIM_GET_COUNTER(motor_A1.tim_encoder) < 32768 ) motor_A1.encoder_data.overflow_cnt++; else motor_A1.encoder_data.overflow_cnt--;
   }else if (htim->Instance == motor_A2.tim_encoder->Instance) { 
@@ -181,39 +208,40 @@ void motor_encoder_overflow_IRQHandler(TIM_HandleTypeDef *htim)
   }else if (htim->Instance == motor_B2.tim_encoder->Instance) { 
 		if(__HAL_TIM_GET_COUNTER(motor_B2.tim_encoder) < 32768 ) motor_B2.encoder_data.overflow_cnt++; else motor_B2.encoder_data.overflow_cnt--;
   }
-
 }
 
 // 溢出中断，定期获取编码，计算车轮速度
 void motor_encoder_parse(void)
 {
 // todo 这里可以根据实际转向手动调整定义
-    motor_A1.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_A1.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;
-    motor_A1.encoder_data.raw_value =__HAL_TIM_GET_COUNTER(motor_A1.tim_encoder);
-    // mm/s
-    motor_A1.encoder_data.calc_value = ((float)motor_A1.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
+    motor_A1.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_A1.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;// todo 暂时没用到
+    motor_A1.encoder_data.raw_value =__HAL_TIM_GET_COUNTER(motor_A1.tim_encoder) + motor_A1.encoder_data.overflow_cnt * 65536;
+    // mm/s 轮子和地面接触的线速度
+    motor_A1.encoder_data.calc_value = -((float)motor_A1.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
     motor_A1.speed_current = (int16_t)(motor_A1.encoder_data.calc_value);
     __HAL_TIM_SetCounter(motor_A1.tim_encoder, 0);
+    motor_A1.encoder_data.overflow_cnt =0;
 
-    motor_A2.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_A2.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;
-    motor_A2.encoder_data.raw_value =__HAL_TIM_GET_COUNTER(motor_A2.tim_encoder);
+    motor_A2.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_A2.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;// todo 暂时没用到
+    motor_A2.encoder_data.raw_value =__HAL_TIM_GET_COUNTER(motor_A2.tim_encoder) + motor_A2.encoder_data.overflow_cnt * 65536;
     // mm/s 调整方向
-    motor_A2.encoder_data.calc_value = -((float)motor_A2.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
+    motor_A2.encoder_data.calc_value = ((float)motor_A2.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
     motor_A2.speed_current = (int16_t)(motor_A2.encoder_data.calc_value);
     __HAL_TIM_SetCounter(motor_A2.tim_encoder, 0);
+    motor_A2.encoder_data.overflow_cnt =0;
 
     // 由于b1、b2使用的timer预装载值是16位的，反向计数从65535向下
     // 但是转速不能超过55圈/s，否则这里会溢出
-    motor_B1.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_B1.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;
+    motor_B1.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_B1.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;// todo 暂时没用到
     motor_B1.encoder_data.raw_value = __HAL_TIM_GET_COUNTER(motor_B1.tim_encoder) + motor_B1.encoder_data.overflow_cnt * 65536;
     // mm/s
-    motor_B1.encoder_data.calc_value = ((float)motor_B1.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
+    motor_B1.encoder_data.calc_value = -((float)motor_B1.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
     motor_B1.speed_current = (int16_t)(motor_B1.encoder_data.calc_value);
     __HAL_TIM_SetCounter(motor_B1.tim_encoder, 0); 
     motor_B1.encoder_data.overflow_cnt =0;
 
-    motor_B2.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_B2.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;
-    motor_B2.encoder_data.raw_value =  __HAL_TIM_GET_COUNTER(motor_B2.tim_encoder) + motor_B2.encoder_data.overflow_cnt * 65536;;
+    motor_B2.encoder_data.dir = (__HAL_TIM_IS_TIM_COUNTING_DOWN(motor_B2.tim_encoder)==0)? MOTOR_DIR_FORWARD:MOTOR_DIR_BACKWARD;// todo 暂时没用到
+    motor_B2.encoder_data.raw_value =  __HAL_TIM_GET_COUNTER(motor_B2.tim_encoder) + motor_B2.encoder_data.overflow_cnt * 65536;
     // mm/s
     motor_B2.encoder_data.calc_value = ((float)motor_B2.encoder_data.raw_value)/ENCODER_LINE_NUM/REDUCTION_RATIO/ENCODER_FREQ_DOUBLE*PI*WHEEL_D*20;
     motor_B2.speed_current = (int16_t)(motor_B2.encoder_data.calc_value);
@@ -221,16 +249,18 @@ void motor_encoder_parse(void)
     motor_B2.encoder_data.overflow_cnt=0;
 }
 
-
 void motor_set_speed_pwm(motor_info_t *m, int32_t s)
 {
   if (s > 0)
   {
     motor_set_direction(m, MOTOR_DIR_FORWARD);
     motor_set_pwm(m, s);
-  }else {
+  }else if (s < 0){
     motor_set_direction(m, MOTOR_DIR_BACKWARD);
     motor_set_pwm(m, -s);
+  }else {
+    motor_set_direction(m, MOTOR_DIR_STOP);
+    motor_set_pwm(m, 0);
   }
 }
 
@@ -246,6 +276,10 @@ void motor_set_direction(motor_info_t *m, MOTOR_DIRECTION d)
   case MOTOR_DIR_BACKWARD:
     x = GPIO_PIN_RESET;
     y = GPIO_PIN_SET;
+    break;
+  case MOTOR_DIR_STOP:
+    x = GPIO_PIN_RESET;
+    y = GPIO_PIN_RESET;
     break;
   default:
     break;
@@ -283,7 +317,7 @@ void motor_kdr_data(void)
 
   // INF_LOG("MA1 dir: %d, raw: %d, cal: %.2f\r\n",motor_A1.encoder_data.dir, motor_A1.encoder_data.raw_value,motor_A1.encoder_data.calc_value);
   // INF_LOG("MA2 dir: %d, raw: %d, cal: %.2f\r\n",motor_A2.encoder_data.dir, motor_A2.encoder_data.raw_value,motor_A2.encoder_data.calc_value);
-  INF_LOG("MB1 dir: %d, raw: %d, cal: %.2f\r\n",motor_B1.encoder_data.dir, motor_B1.encoder_data.raw_value,motor_B1.encoder_data.calc_value);
+  // INF_LOG("MB1 dir: %d, raw: %d, cal: %.2f\r\n",motor_B1.encoder_data.dir, motor_B1.encoder_data.raw_value,motor_B1.encoder_data.calc_value);
   // INF_LOG("MB2 dir: %d, raw: %d, cal: %.2f\r\n",motor_B2.encoder_data.dir, motor_B2.encoder_data.raw_value,motor_B2.encoder_data.calc_value);
 
   KDRobot kd_a1;
@@ -322,9 +356,9 @@ void motor_kdr_cmd(uint8_t* b)
               &(data.start), &(data.stop), &(data.data1), &(data.data2));
 
   motor_A1.speed_target = (int16_t)(*data.target[0]);
-  motor_A2.speed_target = (int16_t)(*data.target[1]);
-  motor_B1.speed_target = (int16_t)(*data.target[2]);
-  motor_B2.speed_target = (int16_t)(*data.target[3]);
+  motor_A2.speed_target = (int16_t)(*data.target[0]);
+  motor_B1.speed_target = (int16_t)(*data.target[0]);
+  motor_B2.speed_target = (int16_t)(*data.target[0]);
 
   motor_A1.pid_para.P = *(data.p[0]);
   motor_A2.pid_para.P = *(data.p[1]);

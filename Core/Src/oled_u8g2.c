@@ -43,12 +43,12 @@ void OLED_U8G2_draw_buf(uint8_t * buf, int buf_len)
   char *tmp = malloc(sizeof(uint8_t)*buf_len +1);
   memcpy(tmp, buf, buf_len);
   tmp[buf_len] = '\0';
-	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB08_tf);
+	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB10_tf);
   char tmp2[24]={0};
   sprintf(tmp2, "len:%d",buf_len);
-  u8g2_DrawStr(&my_u8g2,8,8,tmp2);
-  u8g2_DrawStr(&my_u8g2,64,8,"buf:");
-  u8g2_DrawStr(&my_u8g2,32,24,tmp);
+  u8g2_DrawStr(&my_u8g2,8,10,tmp2);
+  u8g2_DrawStr(&my_u8g2,64,10,"buf:");
+  u8g2_DrawStr(&my_u8g2,8,24,tmp);
 
   u8g2_SendBuffer(&my_u8g2);
   free(tmp);

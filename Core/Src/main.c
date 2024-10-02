@@ -119,9 +119,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
   // uart_it_init();
   uart_dma_it_init();
-  HC_SR04_init();
   OLED_U8G2_init();
   BUZZER_init();
+#ifdef MODULE_HC_SR04
+  HC_SR04_init();
+#endif
 
 #ifdef MODULE_MPU6050
   MPU_Init();					       //��ʼ��MPU6050
@@ -149,10 +151,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    //////////////////////////////  10ms   /////////////////////////////////
     // HAL_UART_Transmit(&huart1,(uint8_t *)"hello world!\r\n",14,HAL_MAX_DELAY);
     // printf("hello purui!\r\n");
     // OLED_U8G2_draw_test();
-    //////////////////////////////  10ms   /////////////////////////////////
+    // motion_control_test_direction();
+
 #ifdef MODULE_MPU6050
     imu_data_t imu_data;
     res= mpu_dmp_get_data(&imu_data);
@@ -173,21 +178,14 @@ int main(void)
     if (loop_cnt % 100 == 0) {
       HAL_GPIO_TogglePin(DOGGY_GPIO_Port, DOGGY_Pin);
 
-#ifdef MODULE_HC_SR04
-      uint16_t mm = HC_SR04_sonar_mm();
-      printf("hc_sr04 sonar distance: %d mm\r\n",mm);
-      OLED_U8G2_draw_hc_sr04(mm);
-#endif
+      motion_control_guardian();
       // motor_test_pwm();
-      // motor_test_encoder();
 #ifdef MODULE_MPU6050   
       OLED_U8G2_draw_mpu6050(&imu_data);
 #endif
     }
     //////////////////////////////  50ms   ///////////////////////////////// 
     if (loop_cnt % 10 == 3) {
-      // car_motion_control_test_motor();
-
 #ifdef MODULE_KDR_REPORTER
       motor_kdr_data();
 #endif

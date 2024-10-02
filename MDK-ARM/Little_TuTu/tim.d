@@ -39,3 +39,4 @@ little_tutu\tim.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 little_tutu\tim.o: ../Core/Inc/hc_sr04.h
 little_tutu\tim.o: ../Core/Inc/motor.h
 little_tutu\tim.o: ../Core/Inc/pid.h
+little_tutu\tim.o: ../Core/Inc/motion.h

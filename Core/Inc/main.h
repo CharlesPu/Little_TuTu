@@ -146,7 +146,7 @@ void Error_Handler(void);
 #define ERR_LOG(format, ...) LOG(ERR, format, ##__VA_ARGS__)
 
 // #define MODULE_MPU6050
-// #define MODULE_HC_SR04
+#define MODULE_HC_SR04
 #define MODULE_KDR_REPORTER
 
 /* USER CODE END Private defines */

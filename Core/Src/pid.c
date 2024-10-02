@@ -36,8 +36,6 @@ int PID_wheelspeed_calc(Pid_t *pid_para, int16_t val_curr, int16_t val_target)
 
     _tempPID = _tempP + _tempI + _tempD;
 
-    _tempPID = _tempPID;
-
     if(_tempPID > 2000)
     {
         _tempPID = 2000;

@@ -23,6 +23,7 @@
 /* USER CODE BEGIN 0 */
 #include "hc_sr04.h"
 #include "motor.h"
+#include "motion.h"
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim1;
@@ -123,7 +124,7 @@ void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 4294967295;
+  htim2.Init.Period = 65535;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
@@ -211,7 +212,7 @@ void MX_TIM5_Init(void)
   htim5.Instance = TIM5;
   htim5.Init.Prescaler = 0;
   htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 4294967295;
+  htim5.Init.Period = 65535;
   htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
@@ -783,6 +784,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   // printf("aaaaaa");
   if (htim->Instance == TIM_ENCODER_CALC.Instance){ // 50ms
     motor_encoder_parse();
+
+    motion_control_motor_ctrl_output();
+
   }else if(htim->Instance == TIM_HC_SR04.Instance) { // 10us
 		HC_SR04_TIM_IRQHandler();
   }else 

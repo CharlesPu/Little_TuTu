@@ -11,11 +11,17 @@
 #define ENCODER_FREQ_DOUBLE 4
 
 #define AUTO_SPEED_MAX 600
-#define TIRE_SPACE 200//轮胎宽度方向距离
+#define TIRE_SPACE 200//轮胎宽度方向距离 mm
+
+#define CAR_WIDTH_X  200//轮胎宽度方向距离 mm
+#define CAR_HEIGHT_Y 200//轮胎高度方向距离 mm
+#define CAR_WIDTH_X_HALF  CAR_WIDTH_X / 2
+#define CAR_HEIGHT_Y_HALF CAR_HEIGHT_Y/ 2
 
 typedef enum
 {
-  MOTOR_DIR_FORWARD = 1U,
+  MOTOR_DIR_STOP = 1U,
+  MOTOR_DIR_FORWARD,
   MOTOR_DIR_BACKWARD
 } MOTOR_DIRECTION;
 

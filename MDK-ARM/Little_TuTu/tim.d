@@ -31,6 +31,7 @@ little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h
 little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h
 little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h
 little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 little_tutu\tim.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
@@ -40,3 +41,4 @@ little_tutu\tim.o: ../Core/Inc/hc_sr04.h
 little_tutu\tim.o: ../Core/Inc/motor.h
 little_tutu\tim.o: ../Core/Inc/pid.h
 little_tutu\tim.o: ../Core/Inc/motion.h
+little_tutu\tim.o: ../Core/Inc/com_rc.h

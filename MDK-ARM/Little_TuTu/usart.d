@@ -31,6 +31,7 @@ little_tutu\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h
 little_tutu\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h
 little_tutu\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 little_tutu\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+little_tutu\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h
 little_tutu\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 little_tutu\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 little_tutu\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
@@ -44,7 +45,8 @@ little_tutu\usart.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h
 little_tutu\usart.o: ../mpu6050/mpu6050.h
 little_tutu\usart.o: ../mpu6050/mpuiic.h
 little_tutu\usart.o: ../Core/Inc/gpio.h
-little_tutu\usart.o: ../Core/Inc/kdr_com.h
+little_tutu\usart.o: ../Core/Inc/com_rc.h
+little_tutu\usart.o: ../Core/Inc/com_kdr.h
 little_tutu\usart.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 little_tutu\usart.o: ../Core/Inc/motor.h
 little_tutu\usart.o: ../Core/Inc/pid.h

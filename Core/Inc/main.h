@@ -112,6 +112,12 @@ void Error_Handler(void);
 #define MB2_PWM_GPIO_Port GPIOA
 #define EA2_A_Pin GPIO_PIN_15
 #define EA2_A_GPIO_Port GPIOA
+#define NRF_IRQ_Pin GPIO_PIN_0
+#define NRF_IRQ_GPIO_Port GPIOD
+#define NRF_CE_Pin GPIO_PIN_1
+#define NRF_CE_GPIO_Port GPIOD
+#define NRF_CS_Pin GPIO_PIN_2
+#define NRF_CS_GPIO_Port GPIOD
 #define HC_SR04_TRIG_Pin GPIO_PIN_4
 #define HC_SR04_TRIG_GPIO_Port GPIOD
 #define BLE_CTRL_TX_Pin GPIO_PIN_5
@@ -146,8 +152,9 @@ void Error_Handler(void);
 #define ERR_LOG(format, ...) LOG(ERR, format, ##__VA_ARGS__)
 
 // #define MODULE_MPU6050
-#define MODULE_HC_SR04
-#define MODULE_KDR_REPORTER
+// #define MODULE_HC_SR04
+// #define MODULE_KDR_REPORTER
+#define MODULE_NRF24L01_RX
 
 /* USER CODE END Private defines */
 

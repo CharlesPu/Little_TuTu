@@ -1,4 +1,5 @@
 #include "pid.h"
+#include "motor.h"
 
 // 输出的是电机pwm值
 int PID_wheelspeed_calc(Pid_t *pid_para, int16_t val_curr, int16_t val_target)
@@ -19,13 +20,13 @@ int PID_wheelspeed_calc(Pid_t *pid_para, int16_t val_curr, int16_t val_target)
     _tpid->SumError += _error;  /*�ۼ����*/
     _tempI = _tpid->I * _tpid->SumError;   /*����I���ֵ*/
 
-    if(_tempI > 2000)
+    if(_tempI > MOTOR_SPEED_PWM_MAX)
     {
-        _tpid->SumError = 2000 / _tpid->I;
+        _tpid->SumError = MOTOR_SPEED_PWM_MAX / _tpid->I;
     }
-    if(_tempI < -2000)
+    if(_tempI < -MOTOR_SPEED_PWM_MAX)
     {
-        _tpid->SumError = -2000 / _tpid->I;
+        _tpid->SumError = -MOTOR_SPEED_PWM_MAX / _tpid->I;
     }
 
     _dError = _error - _tpid->PrevError;/*΢�����*/
@@ -36,13 +37,13 @@ int PID_wheelspeed_calc(Pid_t *pid_para, int16_t val_curr, int16_t val_target)
 
     _tempPID = _tempP + _tempI + _tempD;
 
-    if(_tempPID > 2000)
+    if(_tempPID > MOTOR_SPEED_PWM_MAX)
     {
-        _tempPID = 2000;
+        _tempPID = MOTOR_SPEED_PWM_MAX;
     }
-    if(_tempPID < -2000)
+    if(_tempPID < -MOTOR_SPEED_PWM_MAX)
     {
-        _tempPID  = -2000;
+        _tempPID  = -MOTOR_SPEED_PWM_MAX;
     }
 
     return _tempPID;

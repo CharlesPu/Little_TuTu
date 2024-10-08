@@ -57,22 +57,25 @@ void OLED_U8G2_draw_buf(uint8_t * buf, int buf_len)
 void OLED_U8G2_draw_hex(uint8_t * buf, int buf_len)
 {
   u8g2_ClearBuffer(&my_u8g2); 
-
-  char *tmp = malloc(sizeof(uint8_t)*buf_len*3+1);
-  for (int i = 0; i < buf_len; i++)
-  {
-    sprintf(tmp+3*i, "%02X,",buf[i]);
-  }
-  tmp[buf_len*3+1] = '\0';
-	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB08_tf);
+	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB10_tf);
   char tmp2[24]={0};
   sprintf(tmp2, "len:%d",buf_len);
-  u8g2_DrawStr(&my_u8g2,8,8,tmp2);
-  u8g2_DrawStr(&my_u8g2,64,8,"buf:");
-  u8g2_DrawStr(&my_u8g2,0,24,tmp);
+  u8g2_DrawStr(&my_u8g2,8,12,tmp2);
+  u8g2_DrawStr(&my_u8g2,64,12,"buf:");
+  u8g2_DrawHLine(&my_u8g2,0,14,128);
 
+  char line[24] = {0};
+  uint8_t num_per_line = 6;
+  for (int i = 0; i < buf_len/num_per_line+1; i++)
+  {
+    memset(line, 0, 24);
+    for (int j = 0; j < num_per_line; j++)
+    {
+      if (i*num_per_line+j < buf_len) sprintf(line+3*j, "%02X,",buf[i*num_per_line+j]);
+    }
+    u8g2_DrawStr(&my_u8g2,0,27+i*14,line);
+  }
   u8g2_SendBuffer(&my_u8g2);
-  free(tmp);
 }
 
 void OLED_U8G2_draw_kdr(uint8_t * buf, uint8_t len)
@@ -99,6 +102,54 @@ void OLED_U8G2_draw_kdr(uint8_t * buf, uint8_t len)
   u8g2_DrawStr(&my_u8g2,72,16,"kdr:");
   u8g2_DrawStr(&my_u8g2,0,38,tmpx);
   u8g2_DrawStr(&my_u8g2,0,58,tmpy);
+
+  u8g2_SendBuffer(&my_u8g2);
+  free(tmpx);
+  free(tmpy);
+}
+
+void OLED_U8G2_draw_rc(rc_data_t *rc)
+{
+  u8g2_ClearBuffer(&my_u8g2); 
+
+  char *tmpx = malloc(sizeof(uint8_t)*8*3+1);
+  for (int i = 0; i < 8; i++)
+  {
+    sprintf(tmpx+3*i, "%02X,",rc->buf[i]);
+  }
+  tmpx[8*3+1] = '\0';
+  char *tmpy = malloc(sizeof(uint8_t)*(RC_DATA_LEN-8)*3+1);
+  for (int i = 0; i < RC_DATA_LEN-8; i++)
+  {
+    sprintf(tmpy+3*i, "%02X,",rc->buf[i+8]);
+  }
+  tmpy[(RC_DATA_LEN-8)*3+1] = '\0';
+  
+	u8g2_SetFont(&my_u8g2,u8g2_font_ncenB08_tf);
+  char tmp1[24]={0};
+  sprintf(tmp1, "lx:%d",rc->rk_l_x);
+  u8g2_DrawStr(&my_u8g2,0,8,tmp1);
+  sprintf(tmp1, "ly:%d",rc->rk_l_y);
+  u8g2_DrawStr(&my_u8g2,52,8,tmp1);
+  sprintf(tmp1, "lz:%d",rc->rk_l_z);
+  u8g2_DrawStr(&my_u8g2,100,8,tmp1);
+  
+  sprintf(tmp1, "rx:%d",rc->rk_r_x);
+  u8g2_DrawStr(&my_u8g2,0,24,tmp1);
+  sprintf(tmp1, "ry:%d",rc->rk_r_y);
+  u8g2_DrawStr(&my_u8g2,52,24,tmp1);
+  sprintf(tmp1, "rz:%d",rc->rk_r_z);
+  u8g2_DrawStr(&my_u8g2,100,24,tmp1);
+
+  sprintf(tmp1, "k:%d-%d",rc->key_l,rc->key_r);
+  u8g2_DrawStr(&my_u8g2,0,38,tmp1);
+  sprintf(tmp1, "sl1:%d-%d-%d",rc->sw_l_1,rc->sw_l_2,rc->sw_l_3);
+  u8g2_DrawStr(&my_u8g2,32,38,tmp1);
+  sprintf(tmp1, "sl2:%d-%d-%d",rc->sw_r_1,rc->sw_r_2,rc->sw_r_3);
+  u8g2_DrawStr(&my_u8g2,80,38,tmp1);
+
+  u8g2_DrawStr(&my_u8g2,0,52,tmpx);
+  u8g2_DrawStr(&my_u8g2,0,64,tmpy);
 
   u8g2_SendBuffer(&my_u8g2);
   free(tmpx);

@@ -3,7 +3,7 @@
 #include "motor.h"
 #include "stdio.h"
 #include <string.h>
-#include "kdr_com.h"
+#include "com_kdr.h"
 
 // motor_info_t motor_A1 = {
 //   .m_name = MOTOR_A1,

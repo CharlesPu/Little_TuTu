@@ -20,6 +20,7 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -32,6 +33,8 @@
 #include "motion.h"
 #include "hc_sr04.h"
 #include "buzzer.h"
+#include "nrf24l01.h"
+#include "com_rc.h"
 
 #ifdef MODULE_MPU6050
 #include "mpu6050.h"
@@ -116,13 +119,16 @@ int main(void)
   MX_TIM7_Init();
   MX_USART2_UART_Init();
   MX_TIM10_Init();
+  MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
-  // uart_it_init();
   uart_dma_it_init();
   OLED_U8G2_init();
   BUZZER_init();
 #ifdef MODULE_HC_SR04
   HC_SR04_init();
+#endif
+#ifdef MODULE_NRF24L01_RX
+  NRF24L01_init();
 #endif
 
 #ifdef MODULE_MPU6050
@@ -138,7 +144,7 @@ int main(void)
   motor_encoder_init();
 
   HAL_Delay(2000);
-  BUZZER_beep_twice();
+  // BUZZER_beep_twice();
   INF_LOG("little tutu start!\r\n");
   
   /* USER CODE END 2 */
@@ -178,16 +184,33 @@ int main(void)
     if (loop_cnt % 100 == 0) {
       HAL_GPIO_TogglePin(DOGGY_GPIO_Port, DOGGY_Pin);
 
-      motion_control_guardian();
+      // motion_control_guardian();
       // motor_test_pwm();
 #ifdef MODULE_MPU6050   
       OLED_U8G2_draw_mpu6050(&imu_data);
 #endif
     }
-    //////////////////////////////  50ms   ///////////////////////////////// 
+    //////////////////////////////  500ms   ///////////////////////////////// 
+    if (loop_cnt % 50 == 0) {
+
+    }
+    //////////////////////////////  100ms   ///////////////////////////////// 
     if (loop_cnt % 10 == 3) {
 #ifdef MODULE_KDR_REPORTER
       motor_kdr_data();
+#endif
+    }
+    //////////////////////////////  50ms   ///////////////////////////////// 
+    if (loop_cnt % 5 == 2) {
+#ifdef MODULE_NRF24L01_RX
+      rc_data_t rc;
+      if(NRF24L01_RxPacket(rc.buf)==0)
+      {
+        uint8_t res_dec = rc_data_decode(&rc);
+        if (res_dec) ERR_LOG("rc decode fail!\r\n");
+        // OLED_U8G2_draw_rc(&rc);
+        motion_control_kinematics(motion_control_rc_to_kinematics(&rc));
+      }
 #endif
     }
 

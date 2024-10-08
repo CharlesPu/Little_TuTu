@@ -16,19 +16,19 @@ extern motor_info_t motor_B2;
 // y <-- |  mm/s
 // 逆时针 z  rad/s
 // 小车整体的运动学控制
-void motion_control_kinematics(uint16_t car_speed_x, uint16_t car_speed_y, uint16_t car_speed_z)
+void motion_control_kinematics(car_kinematics_speed_t speed)
 {
-  if((car_speed_x == 0) && (car_speed_y == 0)&& (car_speed_z == 0) &&(motor_A1.speed_current == 0))
+  if((speed.speed_x == 0) && (speed.speed_y == 0)&& (speed.speed_z == 0) &&(motor_A1.speed_current == 0))
   {
     PID_Param_SetZero(&(motor_A1.pid_para));
     PID_Param_SetZero(&(motor_A2.pid_para));
     PID_Param_SetZero(&(motor_B1.pid_para));
     PID_Param_SetZero(&(motor_B2.pid_para));
   }
-  motor_A1.speed_target = car_speed_x - car_speed_y - car_speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
-  motor_A2.speed_target = car_speed_x + car_speed_y + car_speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
-  motor_B1.speed_target = car_speed_x + car_speed_y - car_speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
-  motor_B2.speed_target = car_speed_x - car_speed_y + car_speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
+  motor_A1.speed_target = speed.speed_x - speed.speed_y - speed.speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
+  motor_A2.speed_target = speed.speed_x + speed.speed_y + speed.speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
+  motor_B1.speed_target = speed.speed_x + speed.speed_y - speed.speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
+  motor_B2.speed_target = speed.speed_x - speed.speed_y + speed.speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
 }
 
 int16_t speed_default = 1000;
@@ -63,16 +63,36 @@ void motion_control_input_ble(uint8_t* b)
     if (speed_default < 0) speed_default = 0;
     break;
   case 'a':
-    motion_control_kinematics(speed_default, 0, 0);
+    {car_kinematics_speed_t s = {
+      .speed_x = speed_default,
+      .speed_y = 0,
+      .speed_z = 0,
+    };
+    motion_control_kinematics(s);}
     break;
   case 'b':
-    motion_control_kinematics(0,speed_default, 0);
+   { car_kinematics_speed_t s = {
+      .speed_x = 0,
+      .speed_y = speed_default,
+      .speed_z = 0,
+    };
+    motion_control_kinematics(s);}
     break;
   case 'c':
-    motion_control_kinematics(0,0, speed_default/200);
+    {car_kinematics_speed_t s = {
+      .speed_x = 0,
+      .speed_y = 0,
+      .speed_z = speed_default/200,
+    };
+    motion_control_kinematics(s);}
     break;
   case 'd':
-    motion_control_kinematics(speed_default,speed_default/2, 0);
+    {car_kinematics_speed_t s = {
+      .speed_x = speed_default,
+      .speed_y = speed_default/2,
+      .speed_z = 0,
+    };
+    motion_control_kinematics(s);}
     break;
   default:
     motion_control_stop();
@@ -224,4 +244,19 @@ void motion_control_guardian(void)
     BUZZER_beep_long_off();
   }
 #endif
+}
+
+car_kinematics_speed_t motion_control_rc_to_kinematics(rc_data_t *rc)
+{
+  car_kinematics_speed_t s;
+
+  s.speed_x = (float)(2048 - rc->rk_l_y)/2048.0f * 800;
+  s.speed_y = (float)(2048 - rc->rk_l_x)/2048.0f * 800;
+  s.speed_z = (float)(2048 - rc->rk_r_y)/2048.0f * 6;
+
+  if ((s.speed_x >0 &&s.speed_x < 20) || s.speed_x < 0 &&s.speed_x > -20) s.speed_x = 0;
+  if ((s.speed_y >0 &&s.speed_y < 20) || s.speed_y < 0 &&s.speed_y > -20) s.speed_y = 0;
+
+  printf("aaa %d %d %d \r\n",s.speed_x,s.speed_y,s.speed_z);
+  return s;
 }

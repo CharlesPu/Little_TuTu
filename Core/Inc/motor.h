@@ -10,13 +10,7 @@
 #define ENCODER_LINE_NUM 11
 #define ENCODER_FREQ_DOUBLE 4
 
-#define AUTO_SPEED_MAX 600
-#define TIRE_SPACE 200//轮胎宽度方向距离 mm
-
-#define CAR_WIDTH_X  200//轮胎宽度方向距离 mm
-#define CAR_HEIGHT_Y 200//轮胎高度方向距离 mm
-#define CAR_WIDTH_X_HALF  CAR_WIDTH_X / 2
-#define CAR_HEIGHT_Y_HALF CAR_HEIGHT_Y/ 2
+#define MOTOR_SPEED_PWM_MAX 2000
 
 typedef enum
 {

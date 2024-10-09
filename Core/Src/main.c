@@ -149,7 +149,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint64_t loop_cnt=0;
+  uint64_t loop_cnt = 0;
+  uint16_t rc_disconnect_cnt = 0;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -194,9 +195,28 @@ int main(void)
 #endif
     }
     //////////////////////////////  50ms   ///////////////////////////////// 
-    if (loop_cnt % 5 == 2) {
+    if (loop_cnt % 5 == 1) {
 #ifdef MODULE_NRF24L01_RX
-      motion_control_input_rc();
+    // 以下写成函数有问题，没有找到原因。。
+      rc_data_t rc;
+      rc_data_init(&rc);
+      // 接受成功才会使用遥控数据，否则断连保护，速度都是0
+      if(NRF24L01_RxPacket(rc.buf)==0)// 成功
+      {
+        rc_disconnect_cnt = 0;
+        uint8_t res_dec = rc_data_decode(&rc);
+        // OLED_U8G2_draw_rc(&rc);
+        if (res_dec) {
+          ERR_LOG("rc decode fail!\r\n");
+          motion_control_stop();
+        }else
+          motion_control_kinematics(motion_control_rc_to_kinematics(&rc));
+      }else { // 说明遥控断了
+        if (rc_disconnect_cnt > 12) // 断了(600ms左右)就停止控制
+          motion_control_stop();
+        else 
+          rc_disconnect_cnt++;
+      }
 #endif
     }
 

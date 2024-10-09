@@ -103,6 +103,7 @@ void motion_control_input_ble(uint8_t* b)
 }
 
 // 手柄控制 
+// 以下写成函数有问题，还没有找到原因。。
 uint16_t s_disconnect_cnt = 0;
 void motion_control_input_rc(void)
 {
@@ -288,10 +289,10 @@ car_kinematics_speed_t motion_control_rc_to_kinematics(rc_data_t *rc)
 
   uint16_t car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY;
   uint16_t  car_speed_max_set_z = CAR_SPEED_MAX_DEFAULT_Z;
-  if (!rc->sw_l_2) {
+  if (rc->sw_l_2) {
     car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY+150;
     car_speed_max_set_z  = CAR_SPEED_MAX_DEFAULT_Z+1;
-  }else if (!rc->sw_l_3) {
+  }else if (rc->sw_l_3) {
     car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY+300;
     car_speed_max_set_z  = CAR_SPEED_MAX_DEFAULT_Z+2;
   }
@@ -304,6 +305,6 @@ car_kinematics_speed_t motion_control_rc_to_kinematics(rc_data_t *rc)
   if (my_abs(s.speed_x) <= 20) s.speed_x = 0;
   if (my_abs(s.speed_y) <= 20) s.speed_y = 0;
 
-  INF_LOG("rc result: x=%d, y=%d, z=%d\r\n",s.speed_x, s.speed_y, s.speed_z);
+  // INF_LOG("rc result: x=%d, y=%d, z=%d, 1=%d, 2=%d\r\n",s.speed_x, s.speed_y, s.speed_z,car_speed_max_set_xy,car_speed_max_set_z);
   return s;
 }

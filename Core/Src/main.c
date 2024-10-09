@@ -130,7 +130,6 @@ int main(void)
 #ifdef MODULE_NRF24L01_RX
   NRF24L01_init();
 #endif
-
 #ifdef MODULE_MPU6050
   MPU_Init();					       //��ʼ��MPU6050
   uint8_t res = 0;
@@ -139,12 +138,11 @@ int main(void)
 		ERR_LOG("mpu_dmp_init code: %d\r\n",res);
 	}while (res);
 #endif
-
   motor_init();
   motor_encoder_init();
 
   HAL_Delay(2000);
-  // BUZZER_beep_twice();
+  BUZZER_beep_twice();
   INF_LOG("little tutu start!\r\n");
   
   /* USER CODE END 2 */
@@ -160,7 +158,6 @@ int main(void)
 
     //////////////////////////////  10ms   /////////////////////////////////
     // HAL_UART_Transmit(&huart1,(uint8_t *)"hello world!\r\n",14,HAL_MAX_DELAY);
-    // printf("hello purui!\r\n");
     // OLED_U8G2_draw_test();
     // motion_control_test_direction();
 
@@ -172,10 +169,6 @@ int main(void)
 			imu_data.temp = MPU_Get_Temperature();							  //�õ��¶�ֵ
 			// MPU_Get_Accelerometer(&imu_data);	//�õ����ٶȴ���������
 			// MPU_Get_Gyroscope(&imu_data);	//�õ�����������
-			// printf("Pitch:  %f\r\n",(float)pitch);
-			// printf("Roll:  %f\r\n",(float)roll);
-			// printf("yaw:  %f\r\n",(float)yaw);
-			// printf("temp:  %.02f\r\n",((float)imu_data.temp)/100);printf("-----------------\r\n");
 		}else {
       ERR_LOG("mpu_dmp_get_data fail: %d\r\n", res);
     }
@@ -203,14 +196,7 @@ int main(void)
     //////////////////////////////  50ms   ///////////////////////////////// 
     if (loop_cnt % 5 == 2) {
 #ifdef MODULE_NRF24L01_RX
-      rc_data_t rc;
-      if(NRF24L01_RxPacket(rc.buf)==0)
-      {
-        uint8_t res_dec = rc_data_decode(&rc);
-        if (res_dec) ERR_LOG("rc decode fail!\r\n");
-        // OLED_U8G2_draw_rc(&rc);
-        motion_control_kinematics(motion_control_rc_to_kinematics(&rc));
-      }
+      motion_control_input_rc();
 #endif
     }
 

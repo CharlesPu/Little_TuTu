@@ -5,6 +5,8 @@
 #include "buzzer.h"
 #include "hc_sr04.h"
 #include "oled_u8g2.h"
+#include "com_rc.h"
+#include "nrf24l01.h"
 
 extern motor_info_t motor_A1;
 extern motor_info_t motor_A2;
@@ -100,11 +102,32 @@ void motion_control_input_ble(uint8_t* b)
   }
 }
 
-// 手柄控制 todo
-void motion_control_input_rc(uint16_t car_speed_x, uint16_t car_speed_y, uint16_t car_speed_z)
+// 手柄控制 
+uint16_t s_disconnect_cnt = 0;
+void motion_control_input_rc(void)
 {
-  
+  rc_data_t rc;
+  rc_data_init(&rc);
+  // 接受成功才会使用遥控数据，否则断连保护，速度都是0
+
+  if(NRF24L01_RxPacket(rc.buf)==0)// 成功
+  {
+    s_disconnect_cnt = 0;
+    uint8_t res_dec = rc_data_decode(&rc);
+    // OLED_U8G2_draw_rc(&rc);
+    if (res_dec) {
+      ERR_LOG("rc decode fail!\r\n");
+      motion_control_stop();
+    }else
+      motion_control_kinematics(motion_control_rc_to_kinematics(&rc));
+  }else { // 说明遥控断了
+    if (s_disconnect_cnt > 3) // 断了3次以上就停止控制
+      motion_control_stop();
+    else 
+      s_disconnect_cnt++;
+  }
 }
+
 // 输出控制和指令输入的处理分离
 void motion_control_motor_ctrl_output()
 {
@@ -246,17 +269,41 @@ void motion_control_guardian(void)
 #endif
 }
 
+uint16_t my_abs(int16_t a)
+{
+  if (a >= 0) return a;
+  else return -a;
+}
+
+void car_kinematics_speed_init(car_kinematics_speed_t* sp)
+{
+  sp->speed_x = 0;
+  sp->speed_y = 0;
+  sp->speed_z = 0;
+}
+
 car_kinematics_speed_t motion_control_rc_to_kinematics(rc_data_t *rc)
 {
   car_kinematics_speed_t s;
 
-  s.speed_x = (float)(2048 - rc->rk_l_y)/2048.0f * 800;
-  s.speed_y = (float)(2048 - rc->rk_l_x)/2048.0f * 800;
-  s.speed_z = (float)(2048 - rc->rk_r_y)/2048.0f * 6;
+  uint16_t car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY;
+  uint16_t  car_speed_max_set_z = CAR_SPEED_MAX_DEFAULT_Z;
+  if (!rc->sw_l_2) {
+    car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY+150;
+    car_speed_max_set_z  = CAR_SPEED_MAX_DEFAULT_Z+1;
+  }else if (!rc->sw_l_3) {
+    car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY+300;
+    car_speed_max_set_z  = CAR_SPEED_MAX_DEFAULT_Z+2;
+  }
 
-  if ((s.speed_x >0 &&s.speed_x < 20) || s.speed_x < 0 &&s.speed_x > -20) s.speed_x = 0;
-  if ((s.speed_y >0 &&s.speed_y < 20) || s.speed_y < 0 &&s.speed_y > -20) s.speed_y = 0;
+  s.speed_x = (float)(2048 - rc->rk_l_y)/2048.0f * car_speed_max_set_xy;
+  s.speed_y = (float)(2048 - rc->rk_l_x)/2048.0f * car_speed_max_set_xy;
+  s.speed_z = (float)(2048 - rc->rk_r_y)/2048.0f * car_speed_max_set_z;
 
-  printf("aaa %d %d %d \r\n",s.speed_x,s.speed_y,s.speed_z);
+  // 防止0漂
+  if (my_abs(s.speed_x) <= 20) s.speed_x = 0;
+  if (my_abs(s.speed_y) <= 20) s.speed_y = 0;
+
+  INF_LOG("rc result: x=%d, y=%d, z=%d\r\n",s.speed_x, s.speed_y, s.speed_z);
   return s;
 }

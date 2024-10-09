@@ -12,16 +12,19 @@ typedef struct
 }car_kinematics_speed_t;
 
 
-#define CTRL_DATA_BUF_LEN 1
+#define CTRL_BLE_DATA_BUF_LEN 1
 
 #define CAR_WIDTH_X  180 //轮胎宽度方向距离 mm
 #define CAR_HEIGHT_Y 120 //轮胎高度方向距离 mm
 #define CAR_WIDTH_X_HALF  CAR_WIDTH_X / 2
 #define CAR_HEIGHT_Y_HALF CAR_HEIGHT_Y/ 2
 
+#define CAR_SPEED_MAX_DEFAULT_XY 800
+#define CAR_SPEED_MAX_DEFAULT_Z 6
+
 void motion_control_kinematics(car_kinematics_speed_t speed);
 void motion_control_input_ble(uint8_t* b);
-void motion_control_input_rc(uint16_t car_speed_x, uint16_t car_speed_y, uint16_t car_speed_z);
+void motion_control_input_rc(void);
 void motion_control_motor_pid(void);
 void motion_control_stop(void);
 void motion_control_guardian(void);
@@ -38,6 +41,7 @@ void motion_control_direction_x_y(int16_t speed);
 
 void motion_control_motor_ctrl_output(void);
 void motion_control_test_direction(void);
-
+uint16_t my_abs(int16_t);
+void car_kinematics_speed_init(car_kinematics_speed_t*);
 
 #endif

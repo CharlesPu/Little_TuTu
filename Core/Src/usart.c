@@ -369,14 +369,14 @@ int fgetc(FILE *f)
     HAL_UART_Receive(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
     return (ch);
 }
-/// kdrobot上位机数据处�???????????? /////////////////////////////////////////////////////////
+/// kdrobot上位机数据处�???????????? /////////////////////////////////////////////////////////
 uint8_t g_kdr_rx_buffer[KDR_DATA_BUF_LEN];
 uint8_t TxBuffer[] = "I received!";
-// 中断模式的处�????? 
+// 中断模式的处�????? 
 // deprecated
 void uart_it_init(void)
 {
-  HAL_UART_Receive_IT(&USART_BLE_KDR, (uint8_t *)g_kdr_rx_buffer, KDR_DATA_BUF_LEN);// �???????????????????用接�???????????????????
+  HAL_UART_Receive_IT(&USART_BLE_KDR, (uint8_t *)g_kdr_rx_buffer, KDR_DATA_BUF_LEN);// �???????????????????用接�???????????????????
 }
 
  // 注意！！！！ 读满RxBuffer才会进入下面的处理函数！
@@ -384,15 +384,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart->Instance == USART_BLE_KDR.Instance)		//确认串口为USART1
     {
-        // HAL_UART_Transmit_IT(&huart1,(uint8_t *)TxBuffer,sizeof(TxBuffer));		//发�?�Wilco表明已收到数�??????????????
+        // HAL_UART_Transmit_IT(&huart1,(uint8_t *)TxBuffer,sizeof(TxBuffer));		//发�?�Wilco表明已收到数�??????????????
         // GPIO_PinState state;		//定义引脚状�??
-        // if (RxBuffer[0] == '1')		//如果接收到的数据第二位为�??????????????1�??????????????
+        // if (RxBuffer[0] == '1')		//如果接收到的数据第二位为�??????????????1�??????????????
         // {
-        //     state = GPIO_PIN_RESET;		//下拉引脚电平（即点亮LED�??????????????
+        //     state = GPIO_PIN_RESET;		//下拉引脚电平（即点亮LED�??????????????
         // }
         // if (RxBuffer[0] == '0')		
         // {
-        //     state = GPIO_PIN_SET;		//下拉引脚电平（即点亮LED�??????????????
+        //     state = GPIO_PIN_SET;		//下拉引脚电平（即点亮LED�??????????????
         // }
 		    // HAL_GPIO_WritePin(DOGGY_GPIO_Port, DOGGY_Pin, state);
         // HAL_GPIO_TogglePin(KITTEN_GPIO_Port, KITTEN_Pin);
@@ -406,9 +406,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         // HAL_UART_Receive_IT(&USART_BLE_KDR,(uint8_t *)g_kdr_rx_buffer,KDR_DATA_BUF_LEN);	//再次启用接收
     }
 }
-// DMA模式的中断处�?????
-uint8_t g_kdr_rx_buffer_dma[KDR_DATA_BUF_LEN]; // kdr上位机数�???
-uint8_t g_ctrl_rx_buffer_dma[CTRL_DATA_BUF_LEN]; // 蓝牙控制数据
+// DMA模式的中断处�?????
+uint8_t g_kdr_rx_buffer_dma[KDR_DATA_BUF_LEN]; // kdr上位机数�???
+uint8_t g_ctrl_rx_buffer_dma[CTRL_BLE_DATA_BUF_LEN]; // 蓝牙控制数据
 
 void uart_dma_it_init(void)
 {
@@ -416,7 +416,7 @@ void uart_dma_it_init(void)
   HAL_UART_Receive_DMA(&USART_BLE_KDR, g_kdr_rx_buffer_dma,KDR_DATA_BUF_LEN);
 
   __HAL_UART_ENABLE_IT(&USART_BLE_CTRL, UART_IT_IDLE);
-  HAL_UART_Receive_DMA(&USART_BLE_CTRL, g_ctrl_rx_buffer_dma,CTRL_DATA_BUF_LEN);
+  HAL_UART_Receive_DMA(&USART_BLE_CTRL, g_ctrl_rx_buffer_dma,CTRL_BLE_DATA_BUF_LEN);
 }
 
 void USART3_IRQHandler_dma(void)
@@ -445,15 +445,15 @@ void USART2_IRQHandler_dma(void)
     __HAL_UART_CLEAR_IDLEFLAG(&USART_BLE_CTRL);
     HAL_UART_DMAStop(&USART_BLE_CTRL);
 
-    uint8_t rx_len = CTRL_DATA_BUF_LEN - __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
+    uint8_t rx_len = CTRL_BLE_DATA_BUF_LEN - __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
     HAL_GPIO_TogglePin(KITTEN_GPIO_Port, KITTEN_Pin);
 
-    OLED_U8G2_draw_buf(g_ctrl_rx_buffer_dma, CTRL_DATA_BUF_LEN);
+    OLED_U8G2_draw_buf(g_ctrl_rx_buffer_dma, CTRL_BLE_DATA_BUF_LEN);
     motion_control_input_ble(g_ctrl_rx_buffer_dma);
 
     // printf("xxxx%d\r\n",res); //note:!!!!串口中断中不能有其他串口的发送！
-    memset(g_ctrl_rx_buffer_dma, 0, CTRL_DATA_BUF_LEN);
-    HAL_UART_Receive_DMA(&USART_BLE_CTRL, g_ctrl_rx_buffer_dma,CTRL_DATA_BUF_LEN);
+    memset(g_ctrl_rx_buffer_dma, 0, CTRL_BLE_DATA_BUF_LEN);
+    HAL_UART_Receive_DMA(&USART_BLE_CTRL, g_ctrl_rx_buffer_dma,CTRL_BLE_DATA_BUF_LEN);
   }
 }
 

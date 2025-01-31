@@ -108,7 +108,7 @@ void OLED_U8G2_draw_kdr(uint8_t * buf, uint8_t len)
   free(tmpy);
 }
 
-void OLED_U8G2_draw_rc(rc_data_t *rc)
+void OLED_U8G2_draw_rc_com(rc_data_t *rc)
 {
   u8g2_ClearBuffer(&my_u8g2); 
 

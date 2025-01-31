@@ -65,6 +65,7 @@ void TIM3_IRQHandler(void);
 void USART2_IRQHandler(void);
 void USART3_IRQHandler(void);
 void TIM8_UP_TIM13_IRQHandler(void);
+void DMA1_Stream7_IRQHandler(void);
 void TIM5_IRQHandler(void);
 void TIM7_IRQHandler(void);
 /* USER CODE BEGIN EFP */

@@ -7,6 +7,7 @@
 #include "oled_u8g2.h"
 #include "com_rc.h"
 #include "nrf24l01.h"
+#include "ws2812.h"
 
 extern motor_info_t motor_A1;
 extern motor_info_t motor_A2;
@@ -115,7 +116,7 @@ void motion_control_input_rc(void)
   {
     s_disconnect_cnt = 0;
     uint8_t res_dec = rc_data_decode(&rc);
-    // OLED_U8G2_draw_rc(&rc);
+    // OLED_U8G2_draw_rc_com(&rc);
     if (res_dec) {
       ERR_LOG("rc decode fail!\r\n");
       motion_control_stop();
@@ -255,13 +256,19 @@ void motion_control_stop(void)
   // PID_Param_SetZero(&(motor_B2.pid_para));
 }
 
+uint8_t g_is_guardian_enalbed = 0;
 void motion_control_guardian(void)
 {
+  if (!g_is_guardian_enalbed) {
+    BUZZER_beep_long_off();
+    return;
+  }
+  
 #ifdef MODULE_HC_SR04
   uint16_t mm = HC_SR04_sonar_mm();
   // printf("hc_sr04 sonar distance: %d mm\r\n",mm);
-  OLED_U8G2_draw_hc_sr04(mm);
   if (mm < 300) {
+    // OLED_U8G2_draw_hc_sr04(mm);
     BUZZER_beep_long_on();
     motion_control_stop();
   } else {
@@ -290,21 +297,47 @@ car_kinematics_speed_t motion_control_rc_to_kinematics(rc_data_t *rc)
   uint16_t car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY;
   uint16_t  car_speed_max_set_z = CAR_SPEED_MAX_DEFAULT_Z;
   if (rc->sw_l_2) {
-    car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY+150;
-    car_speed_max_set_z  = CAR_SPEED_MAX_DEFAULT_Z+1;
+    car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY-300;
+    car_speed_max_set_z  = CAR_SPEED_MAX_DEFAULT_Z-2;
   }else if (rc->sw_l_3) {
     car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY+300;
     car_speed_max_set_z  = CAR_SPEED_MAX_DEFAULT_Z+2;
   }
+  // 功能开启
+  if (rc->rk_r_z) g_is_guardian_enalbed = !g_is_guardian_enalbed;
+  if (rc->key_l) g_rgb_led_enabled = !g_rgb_led_enabled;
+  if (rc->key_r) {
+    HAL_GPIO_WritePin(BUBBLE_A_GPIO_Port, BUBBLE_A_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(BUBBLE_B_GPIO_Port, BUBBLE_B_Pin, GPIO_PIN_RESET);
+  } else 
+  {
+    HAL_GPIO_WritePin(BUBBLE_A_GPIO_Port, BUBBLE_A_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BUBBLE_B_GPIO_Port, BUBBLE_B_Pin, GPIO_PIN_RESET);
+  }
 
-  s.speed_x = (float)(2048 - rc->rk_l_y)/2048.0f * car_speed_max_set_xy;
-  s.speed_y = (float)(2048 - rc->rk_l_x)/2048.0f * car_speed_max_set_xy;
-  s.speed_z = (float)(2048 - rc->rk_r_y)/2048.0f * car_speed_max_set_z;
+  // 先判断控制方式
+  if (rc->sw_r_1) // keys
+  {
+    s.speed_x = (float)(2048 - rc->rk_l_y)/2048.0f * car_speed_max_set_xy;
+    s.speed_y = (float)(2048 - rc->rk_l_x)/2048.0f * car_speed_max_set_xy;
+    s.speed_z = (float)(2048 - rc->rk_r_x)/2048.0f * car_speed_max_set_z;
+  }else if (rc->sw_r_2) { // imu
+    int8_t pitch = rc->imu_pitch;
+    if (pitch < -90) pitch = -90;else if (pitch > 90) pitch = 90;
+    int8_t roll = rc->imu_roll;
+    if (roll < -90) roll = -90;else if (roll > 90) roll = 90;
+    int8_t yaw = rc->imu_yaw;
+    if (yaw < -90) yaw = -90;else if (yaw > 90) yaw = 90;
+
+    s.speed_x = (float)(pitch)/90.0f * car_speed_max_set_xy;
+    s.speed_y = (float)(-roll)/90.0f * car_speed_max_set_xy;
+    s.speed_z = (float)(yaw)/90.0f * car_speed_max_set_z;
+  }
 
   // 防止0漂
   if (my_abs(s.speed_x) <= 20) s.speed_x = 0;
   if (my_abs(s.speed_y) <= 20) s.speed_y = 0;
 
-  // INF_LOG("rc result: x=%d, y=%d, z=%d, 1=%d, 2=%d\r\n",s.speed_x, s.speed_y, s.speed_z,car_speed_max_set_xy,car_speed_max_set_z);
+  // INF_LOG("rc result: x=%d, y=%d, z=%d, xy_max=%d, z_max=%d\r\n",s.speed_x, s.speed_y, s.speed_z,car_speed_max_set_xy,car_speed_max_set_z);
   return s;
 }

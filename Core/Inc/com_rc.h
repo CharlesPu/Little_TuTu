@@ -9,10 +9,14 @@
 // 'P'    ( rk1-x )    ( rk1-y )    ( rk2-x )    ( rk2-y ) 
 // | B9[ b7     b6     b5     b4     b3-b0]   
 //       rk1-z  rk2-z  key_l   key_r      0      
-// | B10[ b7     b6     b5     b4     b3     b2     b1-b0] |    B11   
-//       sw1-1  sw1-2  sw1-3  sw2-1  sw2-2  sw2-3     0      checksum
+// | B10[ b7     b6     b5     b4     b3     b2     b1-b0] 
+//       sw1-1  sw1-2  sw1-3  sw2-1  sw2-2  sw2-3     0      
+// | B11  |  B12  | B13
+//  pitch    roll   yaw
+// |  B14   
+//  checksum
 #define RC_DATA_HEAD 'P'
-#define RC_DATA_LEN 12
+#define RC_DATA_LEN 15
 
 typedef struct 
 {
@@ -34,6 +38,10 @@ typedef struct
   uint8_t sw_r_1;
   uint8_t sw_r_2;
   uint8_t sw_r_3;
+
+  int8_t imu_pitch; // -90 ~ 90
+  int8_t imu_roll;  // -90 ~ 90
+  int8_t imu_yaw; // 
 
   uint8_t buf[RC_DATA_LEN];
 }rc_data_t;

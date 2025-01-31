@@ -16,6 +16,9 @@ void rc_data_init(rc_data_t* d)
     d->sw_r_1 =  0;
     d->sw_r_2 =  0;
     d->sw_r_3 =  0;
+    d->imu_pitch =  0;
+    d->imu_roll =  0;
+    d->imu_yaw =  0;
 
     for (int i = 0; i < RC_DATA_LEN; i++)
       d->buf[i] = 0;
@@ -49,6 +52,10 @@ uint8_t rc_data_encode(rc_data_t* rc)
   rc->buf[10] |= (rc->sw_r_2 & 0x01) << 3;
   rc->buf[10] |= (rc->sw_r_3 & 0x01) << 2;
 
+  rc->buf[11] = rc->imu_pitch;
+  rc->buf[12] = rc->imu_roll;
+  rc->buf[13] = rc->imu_yaw;
+
   rc->buf[RC_DATA_LEN-1] = checksum_gen(rc->buf); 
   return 0;
 }
@@ -74,6 +81,10 @@ uint8_t rc_data_decode(rc_data_t* rc)
   rc->sw_r_1 = (rc->buf[10] >> 4) & 0x01;
   rc->sw_r_2 = (rc->buf[10] >> 3) & 0x01;
   rc->sw_r_3 = (rc->buf[10] >> 2) & 0x01;
+
+  rc->imu_pitch = (int8_t)(rc->buf[11]);
+  rc->imu_roll  = (int8_t)(rc->buf[12]);
+  rc->imu_yaw   = (int8_t)(rc->buf[13]);
 
   return 0;
 }

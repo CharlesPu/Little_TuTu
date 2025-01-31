@@ -10,6 +10,7 @@
 "little_tutu\com_rc.o"
 "little_tutu\com_kdr.o"
 "little_tutu\nrf24l01.o"
+"little_tutu\ws2812.o"
 "little_tutu\main.o"
 "little_tutu\gpio.o"
 "little_tutu\dma.o"

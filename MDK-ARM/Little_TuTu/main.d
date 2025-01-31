@@ -56,3 +56,4 @@ little_tutu\main.o: ../Core/Inc/motion.h
 little_tutu\main.o: ../Core/Inc/hc_sr04.h
 little_tutu\main.o: ../Core/Inc/buzzer.h
 little_tutu\main.o: ../Core/Inc/nrf24l01.h
+little_tutu\main.o: ../Core/Inc/ws2812.h

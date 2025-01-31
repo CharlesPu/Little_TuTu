@@ -35,6 +35,7 @@
 #include "buzzer.h"
 #include "nrf24l01.h"
 #include "com_rc.h"
+#include "ws2812.h"
 
 #ifdef MODULE_MPU6050
 #include "mpu6050.h"
@@ -120,10 +121,12 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM10_Init();
   MX_SPI3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   uart_dma_it_init();
   OLED_U8G2_init();
   BUZZER_init();
+  WS2812_Init();
 #ifdef MODULE_HC_SR04
   HC_SR04_init();
 #endif
@@ -141,8 +144,9 @@ int main(void)
   motor_init();
   motor_encoder_init();
 
-  HAL_Delay(2000);
+  HAL_Delay(1000);
   BUZZER_beep_twice();
+  WS2812_blink();
   INF_LOG("little tutu start!\r\n");
   
   /* USER CODE END 2 */
@@ -160,7 +164,9 @@ int main(void)
     //////////////////////////////  10ms   /////////////////////////////////
     // HAL_UART_Transmit(&huart1,(uint8_t *)"hello world!\r\n",14,HAL_MAX_DELAY);
     // OLED_U8G2_draw_test();
+    // motor_test_pwm();
     // motion_control_test_direction();
+    // WS2812_test();
 
 #ifdef MODULE_MPU6050
     imu_data_t imu_data;
@@ -178,15 +184,14 @@ int main(void)
     if (loop_cnt % 100 == 0) {
       HAL_GPIO_TogglePin(DOGGY_GPIO_Port, DOGGY_Pin);
 
-      // motion_control_guardian();
-      // motor_test_pwm();
+      motion_control_guardian();
 #ifdef MODULE_MPU6050   
       OLED_U8G2_draw_mpu6050(&imu_data);
 #endif
     }
     //////////////////////////////  500ms   ///////////////////////////////// 
     if (loop_cnt % 50 == 0) {
-
+      WS2812_breathe_step();
     }
     //////////////////////////////  100ms   ///////////////////////////////// 
     if (loop_cnt % 10 == 3) {
@@ -197,7 +202,7 @@ int main(void)
     //////////////////////////////  50ms   ///////////////////////////////// 
     if (loop_cnt % 5 == 1) {
 #ifdef MODULE_NRF24L01_RX
-    // 以下写成函数有问题，没有找到原因。。
+    // 以下封装成函数有问题，没有找到原因�?��??
       rc_data_t rc;
       rc_data_init(&rc);
       // 接受成功才会使用遥控数据，否则断连保护，速度都是0
@@ -205,14 +210,14 @@ int main(void)
       {
         rc_disconnect_cnt = 0;
         uint8_t res_dec = rc_data_decode(&rc);
-        // OLED_U8G2_draw_rc(&rc);
+        // OLED_U8G2_draw_rc_com(&rc);
         if (res_dec) {
           ERR_LOG("rc decode fail!\r\n");
           motion_control_stop();
         }else
           motion_control_kinematics(motion_control_rc_to_kinematics(&rc));
       }else { // 说明遥控断了
-        if (rc_disconnect_cnt > 12) // 断了(600ms左右)就停止控制
+        if (rc_disconnect_cnt > 12) // 断了(600ms左右)就停止控�??
           motion_control_stop();
         else 
           rc_disconnect_cnt++;

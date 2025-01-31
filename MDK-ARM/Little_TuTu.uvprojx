@@ -444,6 +444,11 @@
               <FilePath>..\Core\Src\nrf24l01.c</FilePath>
             </File>
             <File>
+              <FileName>ws2812.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\ws2812.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>

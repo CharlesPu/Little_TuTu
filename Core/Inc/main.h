@@ -66,6 +66,8 @@ void Error_Handler(void);
 #define MA1_DX_GPIO_Port GPIOE
 #define MA1_DY_Pin GPIO_PIN_5
 #define MA1_DY_GPIO_Port GPIOE
+#define BUBBLE_A_Pin GPIO_PIN_6
+#define BUBBLE_A_GPIO_Port GPIOE
 #define BUZZER_Pin GPIO_PIN_13
 #define BUZZER_GPIO_Port GPIOC
 #define MA12_STBY_Pin GPIO_PIN_0
@@ -74,6 +76,8 @@ void Error_Handler(void);
 #define EA1_A_GPIO_Port GPIOA
 #define EA1_B_Pin GPIO_PIN_1
 #define EA1_B_GPIO_Port GPIOA
+#define BUBBLE_B_Pin GPIO_PIN_2
+#define BUBBLE_B_GPIO_Port GPIOA
 #define EB1_A_Pin GPIO_PIN_6
 #define EB1_A_GPIO_Port GPIOA
 #define EB1_B_Pin GPIO_PIN_7
@@ -132,6 +136,8 @@ void Error_Handler(void);
 #define OLED_SCL_GPIO_Port GPIOB
 #define OLED_SDA_Pin GPIO_PIN_7
 #define OLED_SDA_GPIO_Port GPIOB
+#define RGB_LED_Pin GPIO_PIN_8
+#define RGB_LED_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 #define DBG 0
@@ -152,7 +158,7 @@ void Error_Handler(void);
 #define ERR_LOG(format, ...) LOG(ERR, format, ##__VA_ARGS__)
 
 // #define MODULE_MPU6050
-// #define MODULE_HC_SR04
+#define MODULE_HC_SR04
 // #define MODULE_KDR_REPORTER
 #define MODULE_NRF24L01_RX
 

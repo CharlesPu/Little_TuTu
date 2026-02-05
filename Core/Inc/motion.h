@@ -16,11 +16,13 @@ typedef struct
 
 #define CAR_WIDTH_X  180 //轮胎宽度方向距离 mm
 #define CAR_HEIGHT_Y 120 //轮胎高度方向距离 mm
-#define CAR_WIDTH_X_HALF  CAR_WIDTH_X / 2
-#define CAR_HEIGHT_Y_HALF CAR_HEIGHT_Y/ 2
+#define CAR_WIDTH_X_HALF  (CAR_WIDTH_X / 2)
+#define CAR_HEIGHT_Y_HALF (CAR_HEIGHT_Y / 2)
+// 旋转半径：从车中心到轮子的距离 = sqrt(90^2 + 60^2) ≈ 108.2
+#define CAR_ROTATION_RADIUS 108
 
 #define CAR_SPEED_MAX_DEFAULT_XY 800
-#define CAR_SPEED_MAX_DEFAULT_Z 6
+#define CAR_SPEED_MAX_DEFAULT_Z 8  // 从6提升到8，补偿旋转半径修正后的速度降低
 
 void motion_control_kinematics(car_kinematics_speed_t speed);
 void motion_control_input_ble(uint8_t* b);

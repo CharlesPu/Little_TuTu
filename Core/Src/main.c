@@ -202,24 +202,33 @@ int main(void)
     //////////////////////////////  50ms   ///////////////////////////////// 
     if (loop_cnt % 5 == 1) {
 #ifdef MODULE_NRF24L01_RX
-    // 以下封装成函数有问题，没有找到原因�?��??
+    // 以下封装成函数有问题，没有找到原因�?��??
       rc_data_t rc;
       rc_data_init(&rc);
       // 接受成功才会使用遥控数据，否则断连保护，速度都是0
       if(NRF24L01_RxPacket(rc.buf)==0)// 成功
       {
-        rc_disconnect_cnt = 0;
         uint8_t res_dec = rc_data_decode(&rc);
         // OLED_U8G2_draw_rc_com(&rc);
         if (res_dec) {
-          ERR_LOG("rc decode fail!\r\n");
-          motion_control_stop();
-        }else
+          // 解码失败，视为断连，增加计数但不立即停止
+          ERR_LOG("rc decode fail!\r\n");  // 注释掉以减少串口输出
+          if (rc_disconnect_cnt > 12) // 断了(600ms左右)就停止控�??
+            motion_control_stop();
+          else
+            rc_disconnect_cnt++;
+        }else {
+          // 解码成功，重置断连计数并更新控制
+          rc_disconnect_cnt = 0;
           motion_control_kinematics(motion_control_rc_to_kinematics(&rc));
+        }
       }else { // 说明遥控断了
-        if (rc_disconnect_cnt > 12) // 断了(600ms左右)就停止控�??
+        // 右摇杆的卡顿是因为到了这里，很奇怪，这个问题至今无法解决。最终怀疑还是硬件电路的问题（滤波等）
+        if (rc_disconnect_cnt > 16) // 断了(600ms左右)就停止控�??
+        {
           motion_control_stop();
-        else 
+        }
+        else
           rc_disconnect_cnt++;
       }
 #endif

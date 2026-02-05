@@ -28,10 +28,11 @@ void motion_control_kinematics(car_kinematics_speed_t speed)
     PID_Param_SetZero(&(motor_B1.pid_para));
     PID_Param_SetZero(&(motor_B2.pid_para));
   }
-  motor_A1.speed_target = speed.speed_x - speed.speed_y - speed.speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
-  motor_A2.speed_target = speed.speed_x + speed.speed_y + speed.speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
-  motor_B1.speed_target = speed.speed_x + speed.speed_y - speed.speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
-  motor_B2.speed_target = speed.speed_x - speed.speed_y + speed.speed_z * (CAR_WIDTH_X_HALF + CAR_HEIGHT_Y_HALF);
+  // 使用正确的旋转半径计算电机速度
+  motor_A1.speed_target = speed.speed_x - speed.speed_y - speed.speed_z * CAR_ROTATION_RADIUS;
+  motor_A2.speed_target = speed.speed_x + speed.speed_y + speed.speed_z * CAR_ROTATION_RADIUS;
+  motor_B1.speed_target = speed.speed_x + speed.speed_y - speed.speed_z * CAR_ROTATION_RADIUS;
+  motor_B2.speed_target = speed.speed_x - speed.speed_y + speed.speed_z * CAR_ROTATION_RADIUS;
 }
 
 int16_t speed_default = 1000;
@@ -243,6 +244,7 @@ void motion_control_direction_x_y(int16_t speed)
 
 void motion_control_stop(void)
 {
+  printf("motion_control_stop\r\n");
   motor_A1.speed_target = 0;
   motor_A2.speed_target = 0;
   motor_B1.speed_target = 0;
@@ -257,6 +259,12 @@ void motion_control_stop(void)
 }
 
 uint8_t g_is_guardian_enalbed = 0;
+uint8_t g_bubble_enabled = 0;
+// 按键边沿检测的上一次状态
+static uint8_t s_key_l_last = 0;
+static uint8_t s_key_r_last = 0;
+static uint8_t s_rk_r_z_last = 0;
+
 void motion_control_guardian(void)
 {
   if (!g_is_guardian_enalbed) {
@@ -303,13 +311,21 @@ car_kinematics_speed_t motion_control_rc_to_kinematics(rc_data_t *rc)
     car_speed_max_set_xy = CAR_SPEED_MAX_DEFAULT_XY+300;
     car_speed_max_set_z  = CAR_SPEED_MAX_DEFAULT_Z+2;
   }
-  // 功能开启
-  if (rc->rk_r_z) g_is_guardian_enalbed = !g_is_guardian_enalbed;
-  if (rc->key_l) g_rgb_led_enabled = !g_rgb_led_enabled;
-  if (rc->key_r) {
+  // 功能开启 - 使用边沿检测，只在按键从0变为1时触发
+  if (rc->rk_r_z && !s_rk_r_z_last) g_is_guardian_enalbed = !g_is_guardian_enalbed;
+  if (rc->key_l && !s_key_l_last) g_rgb_led_enabled = !g_rgb_led_enabled;
+  if (rc->key_r && !s_key_r_last) g_bubble_enabled = !g_bubble_enabled;
+
+  // 保存当前状态用于下次边沿检测
+  s_rk_r_z_last = rc->rk_r_z;
+  s_key_l_last = rc->key_l;
+  s_key_r_last = rc->key_r;
+
+  // 根据状态控制吐泡泡机
+  if (g_bubble_enabled) {
     HAL_GPIO_WritePin(BUBBLE_A_GPIO_Port, BUBBLE_A_Pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(BUBBLE_B_GPIO_Port, BUBBLE_B_Pin, GPIO_PIN_RESET);
-  } else 
+  } else
   {
     HAL_GPIO_WritePin(BUBBLE_A_GPIO_Port, BUBBLE_A_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(BUBBLE_B_GPIO_Port, BUBBLE_B_Pin, GPIO_PIN_RESET);
@@ -337,6 +353,7 @@ car_kinematics_speed_t motion_control_rc_to_kinematics(rc_data_t *rc)
   // 防止0漂
   if (my_abs(s.speed_x) <= 20) s.speed_x = 0;
   if (my_abs(s.speed_y) <= 20) s.speed_y = 0;
+  if (my_abs(s.speed_z) <= 2) s.speed_z = 0;  // 旋转速度死区（提升到2以匹配更高的最大速度）
 
   // INF_LOG("rc result: x=%d, y=%d, z=%d, xy_max=%d, z_max=%d\r\n",s.speed_x, s.speed_y, s.speed_z,car_speed_max_set_xy,car_speed_max_set_z);
   return s;
